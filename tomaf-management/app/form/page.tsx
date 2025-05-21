@@ -6,35 +6,13 @@ import PersonalDetails from "./personalDetails";
 import MemberFamily from "./memberFamily";
 import MemberShip from "./membership";
 
+import { SubmitData } from "../db/quiries/insert";
 // Type definitions for form data
-type PersonalDetailsData = {
-  firstName: string;
-  lastName: string;
-  dob: Date | null;
-  gender: string;
-  phone: string;
-  address: string;
-  nationalId: string;
-  maritalStatus: string;
-};
-
-type FamilyDetailsData = {
-  noFamily: boolean;
-  spouseName: string;
-  spouseID: string;
-  spouseContact: string;
-  occupation: string;
-  familySize: string;
-  childrenCount: string;
-  nextOfKin: string;
-};
-
-type MembershipData = {
-  dateJoined: Date | null;
-  isBaptized: boolean;
-  baptismDate: Date | null;
-  departments: Record<string, any>;
-};
+import type {
+  PersonalDetailsData,
+  FamilyDetailsData,
+  MembershipData,
+} from "../ttypes";
 
 type FormData = {
   personalDetails: PersonalDetailsData;
@@ -55,19 +33,20 @@ const Page = () => {
       address: "",
       nationalId: "",
       maritalStatus: "",
+      occupation: "",
     },
     familyDetails: {
       noFamily: false,
       spouseName: "",
       spouseID: "",
       spouseContact: "",
-      occupation: "",
-      familySize: "",
-      childrenCount: "",
+
+      familySize: 0,
+      childrenCount: 0,
       nextOfKin: "",
     },
     membership: {
-      dateJoined: null,
+      dateJoined: new Date(),
       isBaptized: true,
       baptismDate: null,
       departments: {},
@@ -95,11 +74,19 @@ const Page = () => {
     />,
   ];
 
+  // Dummy submitData function, replace with actual implementation or import if needed
+
   const handleSubmit = () => {
+    // Convert departments object to a single Department if only one is expected
+
+    SubmitData(
+      formData.personalDetails,
+      formData.membership,
+      formData.familyDetails
+    );
     console.log("Final Submitted Data:", formData);
     // submit logic
   };
-
   return (
     <div
       className="flex flex-col items-center min-h-screen px-4 text-black"
@@ -180,5 +167,4 @@ const Page = () => {
     </div>
   );
 };
-
 export default Page;

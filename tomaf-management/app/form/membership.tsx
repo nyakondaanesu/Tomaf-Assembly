@@ -1,20 +1,36 @@
 "use client";
 
-import { MembershipData } from "../ttypes"; // Adjust path accordingly
+import { MembershipData } from "../ttypes"; // Adjust this import as needed
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { Department } from "../ttypes"; // Adjust this import as needed
 
-const departmentGroups: Record<string, string[]> = {
-  "Praise & Worship": ["Praise and Worship", "Media"],
-  Administration: ["Adminstration", "Hospitality and Decoration"],
-  Service: ["Ushering", "Welfare", "Prayer and Intercession"],
-  "Youth & Children": [
-    "Youth",
-    "Sunday School and Young Generation",
-    "Boys",
-    "Girls",
+// Updated: Includes department IDs from your DB
+const departmentGroups: Record<string, Department[]> = {
+  "Praise & Worship": [
+    { id: 1, name: "Praise and Worship" },
+    { id: 2, name: "Media" },
   ],
-  Unions: ["Ladies Union", "Couples", "Men's fellowship"],
+  Administration: [
+    { id: 3, name: "Administration" },
+    { id: 4, name: "Hospitality and Decoration" },
+  ],
+  Service: [
+    { id: 5, name: "Ushering" },
+    { id: 6, name: "Prayer and Intercession" },
+    { id: 8, name: "Evangelism" },
+    { id: 12, name: "welfare" },
+  ],
+  "Youth & Children": [
+    { id: 7, name: "Sunday School and Young Generation" },
+    { id: 13, name: "Boys" },
+    { id: 14, name: "Girls" },
+  ],
+  Unions: [
+    { id: 10, name: "ladies union" },
+    { id: 9, name: "Couples union" },
+    { id: 11, name: "men's fellowship" },
+  ],
 };
 
 type MemberShipProps = {
@@ -23,17 +39,24 @@ type MemberShipProps = {
 };
 
 const MemberShip = ({ data, setData }: MemberShipProps) => {
-  const handleDeptChange = (dept: string) => {
+  const handleDeptChange = (id: number, name: string) => {
     const updated = { ...data.departments };
-    if (dept in updated) delete updated[dept];
-    else updated[dept] = "";
+    if (id in updated) {
+      delete updated[id];
+    } else {
+      updated[id] = { name, role: "" };
+    }
     setData({ ...data, departments: updated });
   };
 
-  const handleRoleChange = (dept: string, role: string) => {
+  const handleRoleChange = (id: number, role: string) => {
+    if (!(id in data.departments)) return;
     setData({
       ...data,
-      departments: { ...data.departments, [dept]: role },
+      departments: {
+        ...data.departments,
+        [id]: { ...data.departments[id], role },
+      },
     });
   };
 
@@ -44,7 +67,9 @@ const MemberShip = ({ data, setData }: MemberShipProps) => {
           <label className="font-medium text-gray-700">Date Joined</label>
           <DatePicker
             selected={data.dateJoined}
-            onChange={(date) => setData({ ...data, dateJoined: date })}
+            onChange={(date) => {
+              if (date) setData({ ...data, dateJoined: date });
+            }}
             className="border border-gray-300 p-2 rounded-md"
             placeholderText="Select a date"
             dateFormat="yyyy-MM-dd"
@@ -94,22 +119,22 @@ const MemberShip = ({ data, setData }: MemberShipProps) => {
           >
             <summary className="font-semibold text-lg">{group}</summary>
             <div className="space-y-2 mt-2">
-              {depts.map((dept) => (
-                <div key={dept}>
+              {depts.map(({ id, name }) => (
+                <div key={id}>
                   <div className="flex items-center space-x-2">
                     <input
                       type="checkbox"
-                      checked={dept in data.departments}
-                      onChange={() => handleDeptChange(dept)}
+                      checked={id in data.departments}
+                      onChange={() => handleDeptChange(id, name)}
                     />
-                    <label>{dept}</label>
+                    <label>{name}</label>
                   </div>
-                  {dept in data.departments && (
+                  {id in data.departments && (
                     <input
                       type="text"
-                      placeholder={`Your role in ${dept} e.g. Leader, Member, secretary...`}
-                      value={data.departments[dept]}
-                      onChange={(e) => handleRoleChange(dept, e.target.value)}
+                      placeholder={`Your role in ${name} e.g. Leader, Member, secretary...`}
+                      value={data.departments[id].role}
+                      onChange={(e) => handleRoleChange(id, e.target.value)}
                       className="w-full border border-gray-300 rounded-md p-2 text-sm"
                     />
                   )}

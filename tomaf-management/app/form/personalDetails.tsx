@@ -38,7 +38,6 @@ const PersonalDetails = ({ data, setData }: Props) => {
           />
         </div>
       </div>
-
       {/* Gender & DOB */}
       <div className="flex flex-col md:flex-row gap-4">
         <div className="flex flex-col w-full">
@@ -68,7 +67,6 @@ const PersonalDetails = ({ data, setData }: Props) => {
           />
         </div>
       </div>
-
       {/* Phone & Marital Status */}
       <div className="flex flex-col md:flex-row gap-4">
         <div className="flex flex-col w-full">
@@ -106,7 +104,6 @@ const PersonalDetails = ({ data, setData }: Props) => {
           </div>
         </div>
       </div>
-
       {/* National ID & Address */}
       <div className="flex flex-col md:flex-row gap-4">
         <div className="flex flex-col w-full">
@@ -128,6 +125,20 @@ const PersonalDetails = ({ data, setData }: Props) => {
             placeholder="123 Main Street"
             value={data.address}
             onChange={(e) => setData({ ...data, address: e.target.value })}
+            className="border border-gray-300 p-2 rounded-md"
+          />
+        </div>
+      </div>
+      /* Occupation */
+      <div className="flex flex-col md:flex-row gap-4">
+        <div className="flex flex-col w-full">
+          <label htmlFor="occupation">Occupation</label>
+          <input
+            type="text"
+            id="occupation"
+            placeholder="XX-1234567X12"
+            value={data.occupation}
+            onChange={(e) => setData({ ...data, occupation: e.target.value })}
             className="border border-gray-300 p-2 rounded-md"
           />
         </div>

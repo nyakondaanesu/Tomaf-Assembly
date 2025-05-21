@@ -1,5 +1,5 @@
 // db/schema.ts
-
+import { db } from ".";
 import {
   integer,
   pgTable,
@@ -14,19 +14,18 @@ export const usersTable = pgTable("users", {
   id: serial("member_id").primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
   surname: varchar("surname", { length: 255 }).notNull(),
-  gender: varchar("gender", { length: 10 }).notNull(),
 });
 
 // Member details table
-export const memberDetailsTable = pgTable("member_details", {
+export const personalDetailsTable = pgTable("Personal_details", {
   id: integer("member_id")
     .primaryKey()
     .references(() => usersTable.id, { onDelete: "cascade" }),
-
+  gender: varchar("gender", { length: 10 }).notNull(),
   dob: date("dob").notNull(),
   phone: varchar("phone", { length: 20 }).notNull(),
   address: varchar("address", { length: 255 }).notNull(),
-  nationalId: varchar("national_id", { length: 20 }).notNull(),
+  nationalId: varchar("national_id", { length: 20 }),
   maritalStatus: varchar("marital_status", { length: 20 }).notNull(),
   occupation: varchar("occupation", { length: 50 }).notNull(),
 });
@@ -53,7 +52,7 @@ export const membershipTable = pgTable("membership", {
     .references(() => usersTable.id, { onDelete: "cascade" }),
 
   dateJoined: date("date_joined").notNull(),
-  isBaptized: varchar("is_baptized", { length: 10 }).notNull(),
+  isBaptized: boolean("is_baptized").notNull(),
   baptismDate: date("baptism_date"),
 });
 
@@ -73,3 +72,27 @@ export const memberDepartmentsTable = pgTable("member_departments", {
     .references(() => departmentsTable.id, { onDelete: "cascade" })
     .notNull(),
 });
+/*
+async function seedDepartments() {
+  await db
+    .insert(departmentsTable)
+    .values([
+      { name: "Praise and Worship" },
+      { name: "Media" },
+      { name: "Administration" },
+      { name: "Hospitality and Decorations" },
+      { name: "Ushering" },
+      { name: "Prayer and Intercession" },
+      { name: "Sunday School and Young generation" },
+      { name: "Evangelism" },
+      { name: "Couples union" },
+      { name: "ladies union" },
+      { name: "men's fellowship" },
+      { name: "welfare" },
+      { name: "Boys" },
+      { name: "Girls" },
+    ]);
+}
+
+seedDepartments();
+*/
