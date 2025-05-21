@@ -1,6 +1,4 @@
 "use client";
-
-// Update the import path below if your types are located elsewhere
 import { FamilyDetailsData } from "../ttypes";
 type MemberFamilyProps = {
   data: FamilyDetailsData;
@@ -8,48 +6,96 @@ type MemberFamilyProps = {
 };
 
 const MemberFamily = ({ data, setData }: MemberFamilyProps) => {
+  const handleChange = (
+    id: keyof FamilyDetailsData,
+    value: string | number
+  ) => {
+    setData({
+      ...data,
+      [id]:
+        id === "familySize" || id === "childrenCount" ? Number(value) : value,
+    });
+  };
+
   return (
     <form className="w-full max-w-5xl p-6 space-y-6">
       <div className="flex items-center gap-2">
         <input
           type="checkbox"
+          id="noFamily"
           checked={data.noFamily}
           onChange={() => setData({ ...data, noFamily: !data.noFamily })}
         />
-        <label className="text-sm font-medium">
+        <label htmlFor="noFamily" className="text-sm font-medium">
           I am not married / I don’t have dependents
         </label>
       </div>
 
-      <fieldset disabled={data.noFamily} className="space-y-6">
+      <fieldset
+        disabled={data.noFamily}
+        className={`space-y-6 transition-opacity ${
+          data.noFamily ? "opacity-50" : "opacity-100"
+        }`}
+      >
         {[
-          ["spouseName", "Spouse's Name", "John"],
-          ["spouseID", "Spouse's ID No", "xx-1234-X-12"],
-          ["spouseContact", "Spouse's Contact Number", "+263..."],
-          ["spouseOccupation", "Spouse's Occupation", "Teacher"],
-
-          ["familySize", "Family Size", "5"],
-          ["childrenCount", "Number of Children", "3"],
-          ["nextOfKin", "Next of Kin", "Jane Doe"],
-        ].map(([id, label, placeholder]) => (
+          {
+            id: "spouseName",
+            label: "Spouse's Name",
+            type: "text",
+            placeholder: "John",
+          },
+          {
+            id: "spouseID",
+            label: "Spouse's ID No",
+            type: "text",
+            placeholder: "xx-1234-X-12",
+          },
+          {
+            id: "spouseContact",
+            label: "Spouse's Contact Number",
+            type: "text",
+            placeholder: "+263...",
+          },
+          {
+            id: "spouseOccupation",
+            label: "Spouse's Occupation",
+            type: "text",
+            placeholder: "Teacher",
+          },
+          {
+            id: "familySize",
+            label: "Family Size",
+            type: "number",
+            placeholder: "5",
+          },
+          {
+            id: "childrenCount",
+            label: "Number of Children",
+            type: "number",
+            placeholder: "3",
+          },
+          {
+            id: "nextOfKin",
+            label: "Next of Kin",
+            type: "text",
+            placeholder: "Jane Doe",
+          },
+        ].map(({ id, label, type, placeholder }) => (
           <div key={id} className="flex flex-col">
             <label htmlFor={id}>{label}</label>
             <input
-              type="text"
+              type={type}
               id={id}
               value={
                 typeof data[id as keyof FamilyDetailsData] === "boolean"
-                  ? data[id as keyof FamilyDetailsData]
-                    ? "Yes"
-                    : ""
-                  : (data[id as keyof FamilyDetailsData] as
-                      | string
-                      | number
-                      | undefined) ?? ""
+                  ? ""
+                  : data[id as keyof FamilyDetailsData] !== undefined
+                  ? String(data[id as keyof FamilyDetailsData])
+                  : ""
               }
               placeholder={placeholder}
               onChange={(e) =>
-                setData({ ...data, [id]: e.target.value } as FamilyDetailsData)
+                handleChange(id as keyof FamilyDetailsData, e.target.value)
               }
               className="border border-gray-300 p-2 rounded-md"
             />
