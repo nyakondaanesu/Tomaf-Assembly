@@ -76,17 +76,27 @@ const Page = () => {
 
   // Dummy submitData function, replace with actual implementation or import if needed
 
-  const handleSubmit = () => {
-    // Convert departments object to a single Department if only one is expected
+  const handleSubmit = async () => {
+    try {
+      const res = await fetch("/api/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
 
-    SubmitData(
-      formData.personalDetails,
-      formData.membership,
-      formData.familyDetails
-    );
-    console.log("Final Submitted Data:", formData);
-    // submit logic
+      const result = await res.json();
+      if (result.success) {
+        console.log("Data submitted successfully");
+      } else {
+        console.error("Submission failed:", result.error);
+      }
+    } catch (error) {
+      console.error("Client error:", error);
+    }
   };
+
   return (
     <div
       className="flex flex-col items-center min-h-screen px-4 text-black"

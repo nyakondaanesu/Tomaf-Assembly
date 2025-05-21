@@ -3,21 +3,22 @@ import {
   MembershipData,
   PersonalDetailsData,
 } from "@/app/ttypes";
+
 import { db } from "..";
 import {
-  memberDepartmentsTable,
-  membershipTable,
   personalDetailsTable,
   spouseDetailsTable,
   usersTable,
+  membershipTable,
+  memberDepartmentsTable,
 } from "../schema";
 
-// insert.ts
 export const SubmitData = async (
   personalDetailsData: PersonalDetailsData,
   memberData: MembershipData,
   familyDetailsData: FamilyDetailsData
 ) => {
+  // Insert into usersTable (basic user info)
   const [user] = await db
     .insert(usersTable)
     .values({
@@ -28,10 +29,13 @@ export const SubmitData = async (
 
   const userId = user?.id;
 
+  if (!userId) throw new Error("User ID not returned from insertion.");
+
   if (!personalDetailsData.dob) {
-    throw new Error("Date of birth is required");
+    throw new Error("Date of birth is required.");
   }
 
+  // Insert personal details
   await db.insert(personalDetailsTable).values({
     id: userId,
     gender: personalDetailsData.gender,
@@ -43,34 +47,33 @@ export const SubmitData = async (
     occupation: personalDetailsData.occupation,
   });
 
+  // Insert family details
   await db.insert(spouseDetailsTable).values({
     id: userId,
     nofamily: familyDetailsData.noFamily,
     spouseName: familyDetailsData.spouseName,
     spouseId: familyDetailsData.spouseID,
-    familsize: familyDetailsData.familySize,
-    childrenCount: familyDetailsData.childrenCount,
-    nextOfKin: familyDetailsData.nextOfKin,
     spouseContact: familyDetailsData.spouseContact,
+    familsize: familyDetailsData.familySize ?? 0,
+    childrenCount: familyDetailsData.childrenCount ?? 0,
+    nextOfKin: familyDetailsData.nextOfKin,
   });
 
+  // Insert membership data
   await db.insert(membershipTable).values({
     id: userId,
     dateJoined: memberData.dateJoined?.toISOString().split("T")[0],
     isBaptized: memberData.isBaptized,
-    baptismDate: memberData.baptismDate?.toISOString().split("T")[0],
+    baptismDate: memberData.baptismDate?.toISOString().split("T")[0] || null,
   });
 
   // Insert all selected departments
-  const departments = Object.entries(memberData.departments).map(
-    ([id, dept]) => ({
-      memberId: userId,
-      departmentId: parseInt(id), // since id is a string in Object.entries
-      role: dept.role,
-    })
-  );
+  const departmentEntries = Object.entries(memberData.departments); // Record<number, { name, role }>
 
-  if (departments.length > 0) {
-    await db.insert(memberDepartmentsTable).values(departments);
+  for (const [deptId] of departmentEntries) {
+    await db.insert(memberDepartmentsTable).values({
+      memberId: userId,
+      departmentId: Number(deptId),
+    });
   }
 };

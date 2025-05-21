@@ -129,14 +129,14 @@ const PersonalDetails = ({ data, setData }: Props) => {
           />
         </div>
       </div>
-      /* Occupation */
+
       <div className="flex flex-col md:flex-row gap-4">
         <div className="flex flex-col w-full">
           <label htmlFor="occupation">Occupation</label>
           <input
             type="text"
             id="occupation"
-            placeholder="XX-1234567X12"
+            placeholder="Housewife, Teacher, student, unemployed etc."
             value={data.occupation}
             onChange={(e) => setData({ ...data, occupation: e.target.value })}
             className="border border-gray-300 p-2 rounded-md"

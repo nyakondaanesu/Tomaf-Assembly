@@ -27,7 +27,7 @@ const MemberFamily = ({ data, setData }: MemberFamilyProps) => {
           ["spouseID", "Spouse's ID No", "xx-1234-X-12"],
           ["spouseContact", "Spouse's Contact Number", "+263..."],
           ["spouseOccupation", "Spouse's Occupation", "Teacher"],
-          ["spouseContact", "Spouse's Contact Number", "+263..."],
+
           ["familySize", "Family Size", "5"],
           ["childrenCount", "Number of Children", "3"],
           ["nextOfKin", "Next of Kin", "Jane Doe"],
