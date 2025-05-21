@@ -6,8 +6,6 @@ import PersonalDetails from "./personalDetails";
 import MemberFamily from "./memberFamily";
 import MemberShip from "./membership";
 
-import { SubmitData } from "../db/quiries/insert";
-// Type definitions for form data
 import type {
   PersonalDetailsData,
   FamilyDetailsData,
@@ -22,6 +20,7 @@ type FormData = {
 
 const Page = () => {
   const [currentStep, setCurrentStep] = useState<number>(0);
+  const [submitted, setSubmitted] = useState<boolean>(false);
 
   const [formData, setFormData] = useState<FormData>({
     personalDetails: {
@@ -40,7 +39,6 @@ const Page = () => {
       spouseName: "",
       spouseID: "",
       spouseContact: "",
-
       familySize: 0,
       childrenCount: 0,
       nextOfKin: "",
@@ -74,8 +72,6 @@ const Page = () => {
     />,
   ];
 
-  // Dummy submitData function, replace with actual implementation or import if needed
-
   const handleSubmit = async () => {
     try {
       const res = await fetch("/api/submit", {
@@ -89,6 +85,7 @@ const Page = () => {
       const result = await res.json();
       if (result.success) {
         console.log("Data submitted successfully");
+        setSubmitted(true);
       } else {
         console.error("Submission failed:", result.error);
       }
@@ -147,34 +144,47 @@ const Page = () => {
           )}
         </div>
 
-        {steps[currentStep]}
+        {/* ✅ Success Message */}
+        {submitted && (
+          <div className="flex items-center gap-2 mt-4 bg-green-100 text-green-800 p-4 rounded-md shadow-sm">
+            <Image src="/check.png" alt="hero" width={80} height={80} />
+            <span>Details submitted successfully!</span>
+          </div>
+        )}
 
-        <div className="pt-4 flex justify-between w-full max-w-5xl">
-          {currentStep > 0 && (
+        {!submitted && steps[currentStep]}
+
+        {!submitted && (
+          <div className="pt-4 flex justify-between w-full max-w-5xl">
+            {currentStep > 0 && (
+              <button
+                type="button"
+                onClick={() => setCurrentStep((prev) => Math.max(prev - 1, 0))}
+                className="w-full md:w-auto mx-2 bg-[#FFF9F1] text-purple-600 px-4 py-2 rounded-md hover:bg-purple-200 transition"
+              >
+                Back
+              </button>
+            )}
             <button
               type="button"
-              onClick={() => setCurrentStep((prev) => Math.max(prev - 1, 0))}
-              className="w-full md:w-auto mx-2 bg-[#FFF9F1] text-purple-600 px-4 py-2 rounded-md hover:bg-purple-200 transition"
+              onClick={() => {
+                if (currentStep === steps.length - 1) {
+                  handleSubmit();
+                } else {
+                  setCurrentStep((prev) =>
+                    Math.min(prev + 1, steps.length - 1)
+                  );
+                }
+              }}
+              className="w-full md:w-auto mx-5 bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition"
             >
-              Back
+              {currentStep === steps.length - 1 ? "Submit" : "Next"}
             </button>
-          )}
-          <button
-            type="button"
-            onClick={() => {
-              if (currentStep === steps.length - 1) {
-                handleSubmit();
-              } else {
-                setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
-              }
-            }}
-            className="w-full md:w-auto mx-5 bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition"
-          >
-            {currentStep === steps.length - 1 ? "Submit" : "Next"}
-          </button>
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );
 };
+
 export default Page;
