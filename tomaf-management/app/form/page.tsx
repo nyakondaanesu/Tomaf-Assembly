@@ -53,21 +53,24 @@ const Page = () => {
 
   const steps = [
     <PersonalDetails
+      key="personal"
       data={formData.personalDetails}
       setData={(data: PersonalDetailsData) =>
-        setFormData((prev: FormData) => ({ ...prev, personalDetails: data }))
+        setFormData((prev) => ({ ...prev, personalDetails: data }))
       }
     />,
     <MemberFamily
+      key="family"
       data={formData.familyDetails}
       setData={(data: FamilyDetailsData) =>
-        setFormData((prev: FormData) => ({ ...prev, familyDetails: data }))
+        setFormData((prev) => ({ ...prev, familyDetails: data }))
       }
     />,
     <MemberShip
+      key="membership"
       data={formData.membership}
       setData={(data: MembershipData) =>
-        setFormData((prev: FormData) => ({ ...prev, membership: data }))
+        setFormData((prev) => ({ ...prev, membership: data }))
       }
     />,
   ];
@@ -144,10 +147,9 @@ const Page = () => {
           )}
         </div>
 
-        {/* ✅ Success Message */}
         {submitted && (
           <div className="flex items-center gap-2 mt-4 bg-green-100 text-green-800 p-4 rounded-md shadow-sm">
-            <Image src="/check.png" alt="hero" width={80} height={80} />
+            <Image src="/check.png" alt="Success" width={32} height={32} />
             <span>Details submitted successfully!</span>
           </div>
         )}

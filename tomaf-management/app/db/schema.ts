@@ -1,5 +1,5 @@
 // db/schema.ts
-import { db } from ".";
+
 import {
   integer,
   pgTable,
