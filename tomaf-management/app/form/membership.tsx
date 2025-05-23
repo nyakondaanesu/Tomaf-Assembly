@@ -16,7 +16,7 @@ const departmentGroups: Record<string, Department[]> = {
     { id: 4, name: "Hospitality and Decoration" },
   ],
   Service: [
-    { id: 5, name: "Ushering" },
+    { id: 5, name: "Ushering and Protocols" },
     { id: 6, name: "Prayer and Intercession" },
     { id: 8, name: "Evangelism" },
     { id: 12, name: "welfare" },
@@ -132,10 +132,10 @@ const MemberShip = ({ data, setData }: MemberShipProps) => {
                   {id in data.departments && (
                     <input
                       type="text"
-                      placeholder={`Your role in ${name} e.g. Leader, Member, secretary...`}
+                      placeholder={`Enter your role in ${name} e.g. Leader, Member, secretary...`}
                       value={data.departments[id].role}
                       onChange={(e) => handleRoleChange(id, e.target.value)}
-                      className="w-full border border-gray-300 rounded-md p-2 text-sm"
+                      className="w-full border-blue-500 ring-4 ring-blue-200 rounded-md p-2 text-sm"
                     />
                   )}
                 </div>

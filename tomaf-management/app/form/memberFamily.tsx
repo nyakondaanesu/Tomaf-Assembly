@@ -74,12 +74,6 @@ const MemberFamily = ({ data, setData }: MemberFamilyProps) => {
             type: "number",
             placeholder: "3",
           },
-          {
-            id: "nextOfKin",
-            label: "Next of Kin",
-            type: "text",
-            placeholder: "Jane Doe",
-          },
         ].map(({ id, label, type, placeholder }) => (
           <div key={id} className="flex flex-col">
             <label htmlFor={id}>{label}</label>

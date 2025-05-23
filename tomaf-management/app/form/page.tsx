@@ -161,7 +161,9 @@ const Page = () => {
             {currentStep > 0 && (
               <button
                 type="button"
-                onClick={() => setCurrentStep((prev) => Math.max(prev - 1, 0))}
+                onClick={() => {
+                  setCurrentStep((prev) => Math.max(prev - 1, 0));
+                }}
                 className="w-full md:w-auto mx-2 bg-[#FFF9F1] text-purple-600 px-4 py-2 rounded-md hover:bg-purple-200 transition"
               >
                 Back
@@ -173,6 +175,16 @@ const Page = () => {
                 if (currentStep === steps.length - 1) {
                   handleSubmit();
                 } else {
+                  // check if all required fields are filled
+                  const currentStepData = steps[currentStep].props.data;
+                  const isValid = Object.values(currentStepData).every(
+                    (value) => value !== "" && value !== null
+                  );
+
+                  if (!isValid) {
+                    alert("Please fill all required fields.");
+                    return;
+                  }
                   setCurrentStep((prev) =>
                     Math.min(prev + 1, steps.length - 1)
                   );
