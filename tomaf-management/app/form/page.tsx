@@ -51,6 +51,13 @@ const Page = () => {
     },
   });
 
+  // Define required fields for each step
+  const requiredFields: string[][] = [
+    ["firstName", "lastName", "dob", "gender", "maritalStatus", "occupation"], // Personal Details
+    ["noFamily", "nextOfKin"], // Family Details (assuming nextOfKin is always required, and others depend on noFamily)
+    ["dateJoined", "isBaptized"], // Membership
+  ];
+
   const steps = [
     <PersonalDetails
       key="personal"
@@ -74,6 +81,42 @@ const Page = () => {
       }
     />,
   ];
+
+  const validateCurrentStep = () => {
+    const currentStepData = steps[currentStep].props.data;
+    const fieldsToCheck = requiredFields[currentStep];
+
+    for (const field of fieldsToCheck) {
+      const value = currentStepData[field as keyof typeof currentStepData];
+
+      // Special handling for specific fields if needed
+      if (field === "dob" && value === null) {
+        alert("Please fill in all required fields.");
+        return false;
+      }
+
+      if (typeof value === "string" && value.trim() === "") {
+        alert("Please fill in all required fields.");
+        return false;
+      }
+      if (Array.isArray(value) && value.length === 0) {
+        alert("Please fill in all required fields.");
+        return false;
+      }
+      // If 'noFamily' is false, then 'spouseName' and 'spouseID' are required
+      if (currentStep === 1 && field === "noFamily" && !value) {
+        if (currentStepData.spouseName.trim() === "") {
+          alert("Please fill in spouse's name.");
+          return false;
+        }
+        if (currentStepData.spouseID.trim() === "") {
+          alert("Please fill in spouse's ID.");
+          return false;
+        }
+      }
+    }
+    return true;
+  };
 
   const handleSubmit = async () => {
     try {
@@ -173,21 +216,16 @@ const Page = () => {
               type="button"
               onClick={() => {
                 if (currentStep === steps.length - 1) {
-                  handleSubmit();
-                } else {
-                  // check if all required fields are filled
-                  const currentStepData = steps[currentStep].props.data;
-                  const isValid = Object.values(currentStepData).every(
-                    (value) => value !== "" && value !== null
-                  );
-
-                  if (!isValid) {
-                    alert("Please fill all required fields.");
-                    return;
+                  // Validate before final submission
+                  if (validateCurrentStep()) {
+                    handleSubmit();
                   }
-                  setCurrentStep((prev) =>
-                    Math.min(prev + 1, steps.length - 1)
-                  );
+                } else {
+                  if (validateCurrentStep()) {
+                    setCurrentStep((prev) =>
+                      Math.min(prev + 1, steps.length - 1)
+                    );
+                  }
                 }
               }}
               className="w-full md:w-auto mx-5 bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition"

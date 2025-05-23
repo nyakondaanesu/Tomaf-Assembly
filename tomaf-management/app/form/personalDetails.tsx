@@ -168,9 +168,7 @@ const PersonalDetails = ({ data, setData }: Props) => {
         <div className="flex flex-col w-full">
           <label htmlFor="nationalId">National ID No</label>
           <input
-            {...register("nationalId", {
-              required: "National ID is required",
-            })}
+            {...register("nationalId")}
             onFocus={() => setIsNationalIdFocused(true)}
             onBlur={() => setIsNationalIdFocused(false)}
             placeholder="XX-1234567X12"
