@@ -8,7 +8,7 @@ import {
   serial,
   boolean,
 } from "drizzle-orm/pg-core";
-
+import { relations } from "drizzle-orm";
 // Users table
 export const usersTable = pgTable("users", {
   id: serial("member_id").primaryKey(),
@@ -72,27 +72,30 @@ export const memberDepartmentsTable = pgTable("member_departments", {
     .references(() => departmentsTable.id, { onDelete: "cascade" })
     .notNull(),
 });
-/*
-async function seedDepartments() {
-  await db
-    .insert(departmentsTable)
-    .values([
-      { name: "Praise and Worship" },
-      { name: "Media" },
-      { name: "Administration" },
-      { name: "Hospitality and Decorations" },
-      { name: "Ushering" },
-      { name: "Prayer and Intercession" },
-      { name: "Sunday School and Young generation" },
-      { name: "Evangelism" },
-      { name: "Couples union" },
-      { name: "ladies union" },
-      { name: "men's fellowship" },
-      { name: "welfare" },
-      { name: "Boys" },
-      { name: "Girls" },
-    ]);
-}
 
-seedDepartments();
-*/
+// a user has one personal detail
+
+export const userRelations = relations(usersTable, ({ one }) => ({
+  personalDetails: one(personalDetailsTable, {
+    fields: [usersTable.id],
+    references: [personalDetailsTable.id],
+  }),
+  spouseDetails: one(spouseDetailsTable, {
+    fields: [usersTable.id],
+    references: [spouseDetailsTable.id],
+  }),
+  membership: one(membershipTable, {
+    fields: [usersTable.id],
+    references: [membershipTable.id],
+  }),
+}));
+
+export const personalDetailsRelations = relations(
+  personalDetailsTable,
+  ({ one }) => ({
+    user: one(usersTable, {
+      fields: [personalDetailsTable.id],
+      references: [usersTable.id],
+    }),
+  })
+);

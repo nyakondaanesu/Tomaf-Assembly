@@ -9,9 +9,9 @@ const Navbar = () => {
           width={30}
           className="m-3"
         />
-        <a className="navbar-brand text-xs font-bold" href="/Home">
+        <h1 className="navbar-brand text-xs font-semibold ">
           Tomaf Database Management
-        </a>
+        </h1>
       </div>
     </>
   );

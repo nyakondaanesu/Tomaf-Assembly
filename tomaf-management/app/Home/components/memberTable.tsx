@@ -16,26 +16,32 @@ import {
 import { useEffect, useState } from "react";
 const MemberTable = () => {
   type MemberData = {
-    id: number;
     name: string;
     surname: string;
+    gender: string;
+    phoneNumber: string;
   };
 
   const colunms: ColumnDef<MemberData>[] = [
     {
-      accessorKey: "id",
-      header: "First Name",
-      cell: ({ row }) => row.getValue("id"),
-    },
-    {
       accessorKey: "name",
-      header: "Last Name",
+      header: "First Name",
       cell: ({ row }) => row.getValue("name"),
     },
     {
       accessorKey: "surname",
-      header: "Phone Number",
+      header: "Last Name",
       cell: ({ row }) => row.getValue("surname"),
+    },
+    {
+      accessorKey: "gender",
+      header: "gender",
+      cell: ({ row }) => row.getValue("gender"),
+    },
+    {
+      accessorKey: "phoneNumber",
+      header: "phone Number",
+      cell: ({ row }) => row.getValue("phoneNumber"),
     },
   ];
 
@@ -44,13 +50,13 @@ const MemberTable = () => {
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch("/api/members");
-      console.log("Response:", response);
+      //console.log("Response:", response);
       if (!response.ok) {
         throw new Error("Failed to fetch members");
       }
       const result: MemberData[] = await response.json();
       setData(result);
-      console.log("Fetched Data:", result);
+      //console.log("Fetched Data:", result);
     };
     fetchData();
   }, []);
@@ -62,8 +68,14 @@ const MemberTable = () => {
   });
   return (
     <>
-      <div className=" rounded-lg border border-gray-700 bg-[#111827] shadow-md">
-        <Table>
+      <div className="mx-3 md:mx-5 rounded-lg border border-gray-700 bg-[#111827] shadow-md ">
+        <div className="flex justify-between items-center ">
+          <h1 className="ms-5 my-3 text-md font-bold mt-2">Member List</h1>
+          <button className="me-5 my-3 bg-blue-600 text-white text-sm px-3 py-2 rounded-md hover:bg-blue-700 transition">
+            Add Member
+          </button>
+        </div>
+        <Table className="">
           <TableHeader className="bg-[#1f2937] text-gray-400 uppercase text-xs">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow

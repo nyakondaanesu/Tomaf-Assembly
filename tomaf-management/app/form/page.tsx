@@ -21,6 +21,7 @@ type FormData = {
 const Page = () => {
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [submitted, setSubmitted] = useState<boolean>(false);
+  const [isloading, setIsLoading] = useState<boolean>(false);
 
   const [formData, setFormData] = useState<FormData>({
     personalDetails: {
@@ -51,11 +52,10 @@ const Page = () => {
     },
   });
 
-  // Define required fields for each step
   const requiredFields: string[][] = [
-    ["firstName", "lastName", "dob", "gender", "maritalStatus", "occupation"], // Personal Details
-    ["noFamily", "nextOfKin"], // Family Details (assuming nextOfKin is always required, and others depend on noFamily)
-    ["dateJoined", "isBaptized"], // Membership
+    ["firstName", "lastName", "dob", "gender", "maritalStatus", "occupation"],
+    ["noFamily"],
+    ["dateJoined", "isBaptized"],
   ];
 
   const steps = [
@@ -83,13 +83,16 @@ const Page = () => {
   ];
 
   const validateCurrentStep = () => {
+    if (currentStep === 1 && formData.familyDetails.noFamily) {
+      return true;
+    }
+
     const currentStepData = steps[currentStep].props.data;
     const fieldsToCheck = requiredFields[currentStep];
 
     for (const field of fieldsToCheck) {
       const value = currentStepData[field as keyof typeof currentStepData];
 
-      // Special handling for specific fields if needed
       if (field === "dob" && value === null) {
         alert("Please fill in all required fields.");
         return false;
@@ -99,11 +102,12 @@ const Page = () => {
         alert("Please fill in all required fields.");
         return false;
       }
+
       if (Array.isArray(value) && value.length === 0) {
         alert("Please fill in all required fields.");
         return false;
       }
-      // If 'noFamily' is false, then 'spouseName' and 'spouseID' are required
+
       if (currentStep === 1 && field === "noFamily" && !value) {
         if (currentStepData.spouseName.trim() === "") {
           alert("Please fill in spouse's name.");
@@ -119,6 +123,7 @@ const Page = () => {
   };
 
   const handleSubmit = async () => {
+    setIsLoading(true);
     try {
       const res = await fetch("/api/submit", {
         method: "POST",
@@ -129,6 +134,7 @@ const Page = () => {
       });
 
       const result = await res.json();
+
       if (result.success) {
         console.log("Data submitted successfully");
         setSubmitted(true);
@@ -137,6 +143,8 @@ const Page = () => {
       }
     } catch (error) {
       console.error("Client error:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -190,49 +198,68 @@ const Page = () => {
           )}
         </div>
 
-        {submitted && (
+        {isloading && (
+          <div className="flex flex-col items-center justify-center h-64">
+            <Image src="/loading.gif" alt="Loading" width={48} height={48} />
+            <span className="mt-2 text-yellow-800 text-sm">
+              Submitting details...
+            </span>
+          </div>
+        )}
+
+        {!isloading && submitted && (
           <div className="flex items-center gap-2 mt-4 bg-green-100 text-green-800 p-4 rounded-md shadow-sm">
             <Image src="/check.png" alt="Success" width={32} height={32} />
             <span>Details submitted successfully!</span>
           </div>
         )}
 
-        {!submitted && steps[currentStep]}
+        {!isloading && !submitted && (
+          <>
+            {steps[currentStep]}
 
-        {!submitted && (
-          <div className="pt-4 flex justify-between w-full max-w-5xl">
-            {currentStep > 0 && (
+            <div className="pt-4 flex justify-between w-full max-w-5xl">
+              {currentStep > 0 && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCurrentStep((prev) => Math.max(prev - 1, 0));
+                  }}
+                  className="w-full md:w-auto mx-2 bg-[#FFF9F1] text-purple-600 px-4 py-2 rounded-md hover:bg-purple-200 transition"
+                >
+                  Back
+                </button>
+              )}
               <button
                 type="button"
                 onClick={() => {
-                  setCurrentStep((prev) => Math.max(prev - 1, 0));
+                  if (currentStep === steps.length - 1) {
+                    if (validateCurrentStep()) {
+                      handleSubmit();
+                    }
+                  } else {
+                    if (validateCurrentStep()) {
+                      setCurrentStep((prev) =>
+                        Math.min(prev + 1, steps.length - 1)
+                      );
+                    }
+                  }
                 }}
-                className="w-full md:w-auto mx-2 bg-[#FFF9F1] text-purple-600 px-4 py-2 rounded-md hover:bg-purple-200 transition"
+                disabled={isloading}
+                className={`w-full md:w-auto mx-5 px-4 py-2 rounded-md transition ${
+                  isloading
+                    ? "bg-purple-400 cursor-not-allowed"
+                    : "bg-purple-600 text-white hover:bg-purple-700"
+                }`}
               >
-                Back
+                {isloading
+                  ? "Submitting..."
+                  : currentStep === steps.length - 1
+                  ? "Submit"
+                  : "Next"}
               </button>
-            )}
-            <button
-              type="button"
-              onClick={() => {
-                if (currentStep === steps.length - 1) {
-                  // Validate before final submission
-                  if (validateCurrentStep()) {
-                    handleSubmit();
-                  }
-                } else {
-                  if (validateCurrentStep()) {
-                    setCurrentStep((prev) =>
-                      Math.min(prev + 1, steps.length - 1)
-                    );
-                  }
-                }
-              }}
-              className="w-full md:w-auto mx-5 bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition"
-            >
-              {currentStep === steps.length - 1 ? "Submit" : "Next"}
-            </button>
-          </div>
+            </div>
+          </>
         )}
       </div>
     </div>
