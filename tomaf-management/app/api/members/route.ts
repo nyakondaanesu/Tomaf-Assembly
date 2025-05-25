@@ -12,7 +12,6 @@ export async function GET() {
         name: usersTable.name,
         surname: usersTable.surname,
         gender: personalDetailsTable.gender,
-        phoneNumber: personalDetailsTable.phone,
       })
       .from(usersTable)
       .innerJoin(

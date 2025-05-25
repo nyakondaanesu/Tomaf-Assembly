@@ -32,7 +32,7 @@ export interface Department {
 }
 
 export interface MembershipData {
-  dateJoined: Date;
+  dateJoined: Date | null;
   isBaptized: boolean;
   baptismDate: Date | null;
   departments: Record<number, DepartmentData>; // departmentId -> data

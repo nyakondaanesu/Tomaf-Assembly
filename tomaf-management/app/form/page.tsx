@@ -45,7 +45,7 @@ const Page = () => {
       nextOfKin: "",
     },
     membership: {
-      dateJoined: new Date(),
+      dateJoined: null,
       isBaptized: true,
       baptismDate: null,
       departments: {},
@@ -85,6 +85,19 @@ const Page = () => {
   const validateCurrentStep = () => {
     if (currentStep === 1 && formData.familyDetails.noFamily) {
       return true;
+    }
+
+    //if date joined is not selected, return false
+    if (currentStep === 2 && formData.membership.dateJoined === null) {
+      alert("Please Enter the date you joined Tomaf.");
+      return false;
+    }
+
+    if (currentStep === 2 && formData.membership.isBaptized) {
+      if (formData.membership.baptismDate === null) {
+        alert("if you were baptised select the baptism date.");
+        return false;
+      }
     }
 
     const currentStepData = steps[currentStep].props.data;

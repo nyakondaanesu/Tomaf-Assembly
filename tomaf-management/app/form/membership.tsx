@@ -1,10 +1,13 @@
 "use client";
 
 import { MembershipData } from "../ttypes"; // Adjust this import as needed
-import DatePicker from "react-datepicker";
+import { useForm, Controller } from "react-hook-form";
 import "react-datepicker/dist/react-datepicker.css";
 import { Department } from "../ttypes"; // Adjust this import as needed
-
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { useEffect } from "react";
 // Updated: Includes department IDs from your DB
 const departmentGroups: Record<string, Department[]> = {
   "Praise & Worship": [
@@ -60,28 +63,47 @@ const MemberShip = ({ data, setData }: MemberShipProps) => {
     });
   };
 
+  const { control, watch } = useForm<MembershipData>({
+    defaultValues: data,
+  });
+
+  useEffect(() => {
+    const subscription = watch((values) => {
+      setData(values as MembershipData);
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, setData]);
+
   return (
     <form className="max-w-5xl w-full flex flex-col space-y-6 p-4">
       <div className="flex flex-col md:flex-row gap-4">
         <div className="flex flex-col">
-          <label className="font-medium text-gray-700">Date Joined</label>
-          <DatePicker
-            selected={data.dateJoined}
-            onChange={(date) => {
-              if (date) setData({ ...data, dateJoined: date });
-            }}
-            className="border border-gray-300 p-2 rounded-md"
-            placeholderText="Select a date"
-            dateFormat="yyyy-MM-dd"
-            showYearDropdown
-            scrollableYearDropdown
-            yearDropdownItemNumber={100}
-          />
+          <label className="font-medium text-gray-700">Enter Date Joined</label>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <Controller
+              name="dateJoined"
+              control={control}
+              render={({ field }) => (
+                <DatePicker
+                  {...field}
+                  format="dd/MM/yyyy"
+                  slotProps={{
+                    textField: {
+                      fullWidth: true,
+                      variant: "outlined",
+                      size: "small",
+                    },
+                  }}
+                />
+              )}
+            />
+          </LocalizationProvider>
         </div>
 
-        <div className="flex flex-col">
+        <div className="flex flex-col mt-1">
           <div className="flex items-center space-x-2">
             <input
+              className="h-4 w-4"
               type="checkbox"
               checked={data.isBaptized}
               onChange={() =>
@@ -89,20 +111,29 @@ const MemberShip = ({ data, setData }: MemberShipProps) => {
               }
             />
             <label className="text-sm text-gray-800 font-medium">
-              Baptized
+              Baptized (check if baptized)
             </label>
           </div>
           {data.isBaptized && (
-            <DatePicker
-              selected={data.baptismDate}
-              onChange={(date) => setData({ ...data, baptismDate: date })}
-              className="border border-gray-300 p-2 rounded-md"
-              placeholderText="Select baptism date"
-              dateFormat="yyyy-MM-dd"
-              showYearDropdown
-              scrollableYearDropdown
-              yearDropdownItemNumber={100}
-            />
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <Controller
+                name="baptismDate"
+                control={control}
+                render={({ field }) => (
+                  <DatePicker
+                    {...field}
+                    format="dd/MM/yyyy"
+                    slotProps={{
+                      textField: {
+                        fullWidth: true,
+                        variant: "outlined",
+                        size: "small",
+                      },
+                    }}
+                  />
+                )}
+              />
+            </LocalizationProvider>
           )}
         </div>
       </div>

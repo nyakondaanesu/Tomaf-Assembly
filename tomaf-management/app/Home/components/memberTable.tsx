@@ -1,4 +1,13 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -12,14 +21,15 @@ import {
   flexRender,
   getCoreRowModel,
   useReactTable,
+  getPaginationRowModel,
 } from "@tanstack/react-table";
+import { MoreHorizontal } from "lucide-react";
 import { useEffect, useState } from "react";
 const MemberTable = () => {
   type MemberData = {
     name: string;
     surname: string;
     gender: string;
-    phoneNumber: string;
   };
 
   const colunms: ColumnDef<MemberData>[] = [
@@ -38,10 +48,30 @@ const MemberTable = () => {
       header: "gender",
       cell: ({ row }) => row.getValue("gender"),
     },
+
     {
-      accessorKey: "phoneNumber",
-      header: "phone Number",
-      cell: ({ row }) => row.getValue("phoneNumber"),
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => (
+        <div className="flex space-x-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>More Details</DropdownMenuItem>
+              <DropdownMenuItem>Edit User Details</DropdownMenuItem>
+              <DropdownMenuItem>Delete User Details</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      ),
     },
   ];
 
@@ -65,17 +95,18 @@ const MemberTable = () => {
     data,
     columns: colunms,
     getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
   });
   return (
     <>
-      <div className="mx-3 md:mx-5 rounded-lg border border-gray-700 bg-[#111827] shadow-md ">
+      <div className="mx-3 md:mx-5 rounded-lg border border-gray-700 bg-[#111827] shadow-md  ">
         <div className="flex justify-between items-center ">
           <h1 className="ms-5 my-3 text-md font-bold mt-2">Member List</h1>
           <button className="me-5 my-3 bg-blue-600 text-white text-sm px-3 py-2 rounded-md hover:bg-blue-700 transition">
             Add Member
           </button>
         </div>
-        <Table className="">
+        <Table className="mb-5">
           <TableHeader className="bg-[#1f2937] text-gray-400 uppercase text-xs">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow
@@ -127,6 +158,26 @@ const MemberTable = () => {
             )}
           </TableBody>
         </Table>
+      </div>
+      <div className="flex items-center justify-end space-x-2 me-5 py-4">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.previousPage()}
+          disabled={!table.getCanPreviousPage()}
+          className="text-white bg-gray-800 hover:bg-gray-700 disabled:bg-gray-600 disabled:cursor-not-allowed"
+        >
+          Previous
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.nextPage()}
+          disabled={!table.getCanNextPage()}
+          className="text-white bg-gray-800 hover:bg-gray-700 disabled:bg-gray-600 disabled:cursor-not-allowed"
+        >
+          Next
+        </Button>
       </div>
     </>
   );

@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+import { Controller } from "react-hook-form";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { PersonalDetailsData } from "../ttypes";
 
 interface Props {
@@ -12,12 +14,10 @@ interface Props {
 }
 
 const PersonalDetails = ({ data, setData }: Props) => {
-  const { register, setValue, watch, handleSubmit } =
+  const { register, watch, handleSubmit, control } =
     useForm<PersonalDetailsData>({
       defaultValues: data,
     });
-
-  const dob = watch("dob");
 
   useEffect(() => {
     const subscription = watch((values) => {
@@ -28,7 +28,7 @@ const PersonalDetails = ({ data, setData }: Props) => {
 
   const [isNameFocused, setIsNameFocused] = useState(false);
   const [isLastNameFocused, setIsLastNameFocused] = useState(false);
-  const [isDobFocused, setIsDobFocused] = useState(false);
+
   const [isPhoneFocused, setIsPhoneFocused] = useState(false);
   const [isAddressFocused, setIsAddressFocused] = useState(false);
   const [isOccupationFocused, setIsOccupationFocused] = useState(false);
@@ -92,8 +92,8 @@ const PersonalDetails = ({ data, setData }: Props) => {
                 : "border-gray-300"
             } `}
           >
-            <option value="" className="text-gray-300">
-              Select gender
+            <option value="" disabled hidden>
+              Select Gender
             </option>
             <option value="male">Male</option>
             <option value="female">Female</option>
@@ -102,22 +102,26 @@ const PersonalDetails = ({ data, setData }: Props) => {
 
         <div className="flex flex-col w-full">
           <label htmlFor="dob">Date of Birth</label>
-          <DatePicker
-            onFocus={() => setIsDobFocused(true)}
-            onBlur={() => setIsDobFocused(false)}
-            selected={dob}
-            onChange={(date) => setValue("dob", date)}
-            className={`border p-2 rounded-md w-full ${
-              isDobFocused
-                ? "border-blue-500 ring-4 ring-blue-200"
-                : "border-gray-300"
-            } `}
-            placeholderText="Select a date"
-            dateFormat="yyyy-MM-dd"
-            showYearDropdown
-            scrollableYearDropdown
-            yearDropdownItemNumber={100}
-          />
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <Controller
+              control={control}
+              name="dob"
+              rules={{ required: "Date of birth is required" }}
+              render={({ field }) => (
+                <DatePicker
+                  {...field}
+                  format="dd/MM/yyyy"
+                  slotProps={{
+                    textField: {
+                      fullWidth: true,
+                      variant: "outlined",
+                      size: "small",
+                    },
+                  }}
+                />
+              )}
+            />
+          </LocalizationProvider>
         </div>
       </div>
 
