@@ -29,28 +29,11 @@ import {
 import { MoreHorizontal } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-type Filters = {
-  minAge?: number;
-  maxAge?: number;
-  departments: string[];
-  gender?: string;
-  maritalStatus?: string;
-  occupation?: string;
-};
-
 type MemberTableProps = {
   searchQuery: string;
-} & Filters;
+};
 
-const MemberTable = ({
-  searchQuery,
-  minAge,
-  maxAge,
-  departments,
-  gender,
-  maritalStatus,
-  occupation,
-}: MemberTableProps) => {
+const MemberTable = ({ searchQuery }: MemberTableProps) => {
   type MemberData = {
     name: string;
     surname: string;
@@ -102,7 +85,9 @@ const MemberTable = ({
 
     {
       id: "actions",
-      header: "Actions",
+      header: () => {
+        <div className="hidden lg:block">Actions</div>;
+      },
       cell: ({ row }) => (
         <>
           {/* Visible on large screens only */}
@@ -133,14 +118,6 @@ const MemberTable = ({
   const timeoutRef = useRef<any>(null);
   const [data, setData] = useState<MemberData[]>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [filters, setFilters] = useState<Filters>({
-    minAge: undefined,
-    maxAge: undefined,
-    gender: undefined,
-    maritalStatus: undefined,
-    occupation: undefined,
-    departments: [],
-  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -166,10 +143,6 @@ const MemberTable = ({
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  const handleFilterChange = (newFilters: Filters) => {
-    //
-  };
-
   useEffect(() => {
     table.getColumn("name")?.setFilterValue(searchQuery);
   }, [searchQuery, table]);
@@ -189,7 +162,14 @@ const MemberTable = ({
                 className="border-b border-gray-700"
               >
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id} className="px-4 py-3">
+                  <TableHead
+                    key={header.id}
+                    className={`px-4 py-3 ${
+                      header.column.id === "actions"
+                        ? "hidden lg:table-cell"
+                        : ""
+                    }`}
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(

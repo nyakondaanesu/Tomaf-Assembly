@@ -14,15 +14,7 @@ const page = () => {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <MemberTable
-          searchQuery={search}
-          minAge={1}
-          maxAge={3}
-          gender=""
-          occupation=""
-          maritalStatus=""
-          departments={[]}
-        />
+        <MemberTable searchQuery={search} />
       </div>
     </>
   );
