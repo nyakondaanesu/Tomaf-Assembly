@@ -3,7 +3,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Users, Search, Filter } from "lucide-react";
 
-const SearchUser = () => {
+type props = {
+  value: string;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+};
+
+const SearchUser = ({ value, onChange }: props) => {
   return (
     <div className="md:flex w-full px-4 py-6 bg-slate-950  items-center justify-center space-x-4 space-y-4 md:space-y-0 md:space-x-6 md:justify-start">
       {/* Stats Card */}
@@ -20,6 +25,8 @@ const SearchUser = () => {
         <Input
           type="text"
           placeholder="Search member..."
+          value={value}
+          onChange={onChange}
           className="flex-1 bg-gray-800 border border-gray-700 text-white placeholder-gray-400"
         />
         <div className="flex  space-x-1">

@@ -21,18 +21,26 @@ import {
   flexRender,
   getCoreRowModel,
   useReactTable,
+  getFilteredRowModel,
   getPaginationRowModel,
+  ColumnFiltersState,
 } from "@tanstack/react-table";
+
 import { MoreHorizontal } from "lucide-react";
 import { useEffect, useState } from "react";
-const MemberTable = () => {
+
+type Props = {
+  searchQuery: string;
+};
+
+const MemberTable = ({ searchQuery }: Props) => {
   type MemberData = {
     name: string;
     surname: string;
     gender: string;
   };
 
-  const colunms: ColumnDef<MemberData>[] = [
+  const columns: ColumnDef<MemberData>[] = [
     {
       accessorKey: "name",
       header: "First Name",
@@ -45,10 +53,9 @@ const MemberTable = () => {
     },
     {
       accessorKey: "gender",
-      header: "gender",
+      header: "Gender",
       cell: ({ row }) => row.getValue("gender"),
     },
-
     {
       id: "actions",
       header: "Actions",
@@ -63,9 +70,8 @@ const MemberTable = () => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-
               <DropdownMenuSeparator />
-              <DropdownMenuItem>More Details</DropdownMenuItem>
+              <DropdownMenuItem>More User Details</DropdownMenuItem>
               <DropdownMenuItem>Edit User Details</DropdownMenuItem>
               <DropdownMenuItem>Delete User Details</DropdownMenuItem>
             </DropdownMenuContent>
@@ -76,36 +82,43 @@ const MemberTable = () => {
   ];
 
   const [data, setData] = useState<MemberData[]>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch("/api/members");
-      //console.log("Response:", response);
       if (!response.ok) {
         throw new Error("Failed to fetch members");
       }
       const result: MemberData[] = await response.json();
       setData(result);
-      //console.log("Fetched Data:", result);
     };
     fetchData();
   }, []);
 
   const table = useReactTable({
     data,
-    columns: colunms,
+    columns,
+    state: {
+      columnFilters,
+    },
+    onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
+
+  useEffect(() => {
+    table.getColumn("name")?.setFilterValue(searchQuery);
+  }, [searchQuery, table]);
+
   return (
     <>
-      <div className="mx-3 md:mx-5 rounded-lg border border-gray-700 bg-[#111827] shadow-md  ">
-        <div className="flex justify-between items-center ">
-          <h1 className="ms-5 my-3 text-md font-bold mt-2">Member List</h1>
-          <button className="me-5 my-3 bg-blue-600 text-white text-sm px-3 py-2 rounded-md hover:bg-blue-700 transition">
-            Add Member
-          </button>
+      <div className="mx-3 md:mx-5 rounded-lg border border-gray-700 bg-[#111827] shadow-md">
+        <div className="flex justify-between items-center p-4">
+          <h1 className="text-md font-bold">Member List</h1>
         </div>
+
         <Table className="mb-5">
           <TableHeader className="bg-[#1f2937] text-gray-400 uppercase text-xs">
             {table.getHeaderGroups().map((headerGroup) => (
@@ -113,18 +126,16 @@ const MemberTable = () => {
                 key={headerGroup.id}
                 className="border-b border-gray-700"
               >
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id} className="px-4 py-3">
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id} className="px-4 py-3">
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
@@ -149,7 +160,7 @@ const MemberTable = () => {
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={colunms.length}
+                  colSpan={columns.length}
                   className="h-24 text-center"
                 >
                   No results.
@@ -159,6 +170,7 @@ const MemberTable = () => {
           </TableBody>
         </Table>
       </div>
+
       <div className="flex items-center justify-end space-x-2 me-5 py-4">
         <Button
           variant="outline"

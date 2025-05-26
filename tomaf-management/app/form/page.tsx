@@ -156,6 +156,11 @@ const Page = () => {
       }
     } catch (error) {
       console.error("Client error:", error);
+
+      //display a user-friendly error message
+      alert(
+        "An error occurred while submitting your details. Please try again."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -213,7 +218,13 @@ const Page = () => {
 
         {isloading && (
           <div className="flex flex-col items-center justify-center h-64">
-            <Image src="/loading.gif" alt="Loading" width={48} height={48} />
+            <Image
+              src="/loading.gif"
+              alt="Loading"
+              width={48}
+              height={48}
+              unoptimized
+            />
             <span className="mt-2 text-yellow-800 text-sm">
               Submitting details...
             </span>
@@ -222,7 +233,7 @@ const Page = () => {
 
         {!isloading && submitted && (
           <div className="flex items-center gap-2 mt-4 bg-green-100 text-green-800 p-4 rounded-md shadow-sm">
-            <Image src="/check.png" alt="Success" width={32} height={32} />
+            <Image src="/check.png" alt="Success" width={50} height={50} />
             <span>Details submitted successfully!</span>
           </div>
         )}

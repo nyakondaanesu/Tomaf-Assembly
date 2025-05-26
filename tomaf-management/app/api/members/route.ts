@@ -19,7 +19,7 @@ export async function GET() {
         eq(usersTable.id, personalDetailsTable.id)
       );
 
-    console.log("Fetched members:", joinedData);
+    //console.log("Fetched members:", joinedData);
     return NextResponse.json(joinedData);
   } catch (error) {
     console.error("Error fetching members:", error);
