@@ -45,3 +45,11 @@ export interface FormData {
   membership: MembershipData;
   department: Department;
 }
+
+export type Filters = {
+  minAge?: number;
+  maxAge?: number;
+  gender?: string;
+  occupation?: string;
+  departments: string[];
+};

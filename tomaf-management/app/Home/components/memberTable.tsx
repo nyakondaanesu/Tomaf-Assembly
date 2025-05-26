@@ -27,17 +27,35 @@ import {
 } from "@tanstack/react-table";
 
 import { MoreHorizontal } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-type Props = {
-  searchQuery: string;
+type Filters = {
+  minAge?: number;
+  maxAge?: number;
+  departments: string[];
+  gender?: string;
+  maritalStatus?: string;
+  occupation?: string;
 };
 
-const MemberTable = ({ searchQuery }: Props) => {
+type MemberTableProps = {
+  searchQuery: string;
+} & Filters;
+
+const MemberTable = ({
+  searchQuery,
+  minAge,
+  maxAge,
+  departments,
+  gender,
+  maritalStatus,
+  occupation,
+}: MemberTableProps) => {
   type MemberData = {
     name: string;
     surname: string;
     gender: string;
+    dob?: string; // ISO date string
   };
 
   const columns: ColumnDef<MemberData>[] = [
@@ -56,33 +74,73 @@ const MemberTable = ({ searchQuery }: Props) => {
       header: "Gender",
       cell: ({ row }) => row.getValue("gender"),
     },
+
+    {
+      accessorKey: "dob",
+      header: "Age",
+      cell: ({ row }) => {
+        const dob = row.getValue("dob");
+        if (!dob || typeof dob !== "string") return "N/A";
+
+        const [year, month, day] = dob.split("-").map(Number);
+        if (!year || !month || !day) return "N/A";
+
+        const birthDate = new Date(year, month - 1, day); // months are 0-indexed
+        const today = new Date();
+
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const hasHadBirthdayThisYear =
+          today.getMonth() > birthDate.getMonth() ||
+          (today.getMonth() === birthDate.getMonth() &&
+            today.getDate() >= birthDate.getDate());
+
+        if (!hasHadBirthdayThisYear) age--;
+
+        return age.toString();
+      },
+    },
+
     {
       id: "actions",
       header: "Actions",
       cell: ({ row }) => (
-        <div className="flex space-x-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>More User Details</DropdownMenuItem>
-              <DropdownMenuItem>Edit User Details</DropdownMenuItem>
-              <DropdownMenuItem>Delete User Details</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+        <>
+          {/* Visible on large screens only */}
+          <div className="hidden lg:flex space-x-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <span className="sr-only">Open menu</span>
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>More User Details</DropdownMenuItem>
+                <DropdownMenuItem>Edit User Details</DropdownMenuItem>
+                <DropdownMenuItem>Delete User Details</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </>
       ),
     },
   ];
 
+  const [selectedRow, setSelectedRow] = useState<MemberData | null>(null);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const timeoutRef = useRef<any>(null);
   const [data, setData] = useState<MemberData[]>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [filters, setFilters] = useState<Filters>({
+    minAge: undefined,
+    maxAge: undefined,
+    gender: undefined,
+    maritalStatus: undefined,
+    occupation: undefined,
+    departments: [],
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -107,6 +165,10 @@ const MemberTable = ({ searchQuery }: Props) => {
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
+
+  const handleFilterChange = (newFilters: Filters) => {
+    //
+  };
 
   useEffect(() => {
     table.getColumn("name")?.setFilterValue(searchQuery);
@@ -139,6 +201,7 @@ const MemberTable = ({ searchQuery }: Props) => {
               </TableRow>
             ))}
           </TableHeader>
+
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
@@ -146,6 +209,14 @@ const MemberTable = ({ searchQuery }: Props) => {
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                   className="border-b border-gray-700 hover:bg-[#1e293b] transition"
+                  onTouchStart={() => {
+                    timeoutRef.current = setTimeout(() => {
+                      setSelectedRow(row.original);
+                      setShowMobileMenu(true);
+                    }, 500);
+                  }}
+                  onTouchEnd={() => clearTimeout(timeoutRef.current)}
+                  onTouchMove={() => clearTimeout(timeoutRef.current)}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="px-4 py-3">
@@ -168,6 +239,19 @@ const MemberTable = ({ searchQuery }: Props) => {
               </TableRow>
             )}
           </TableBody>
+
+          {/* Mobile Action Dropdown */}
+          {showMobileMenu && selectedRow && (
+            <DropdownMenu open onOpenChange={(open) => setShowMobileMenu(open)}>
+              <DropdownMenuContent className="z-50 fixed bottom-10 left-5 right-5">
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>More User Details</DropdownMenuItem>
+                <DropdownMenuItem>Edit User Details</DropdownMenuItem>
+                <DropdownMenuItem>Delete User Details</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </Table>
       </div>
 

@@ -1,7 +1,13 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Users, Search, Filter } from "lucide-react";
+import { Users, Search, Filter, MoreHorizontal } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+} from "@/components/ui/dropdown-menu";
+import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
+import FilterForm, { Filters } from "./filter";
 
 type props = {
   value: string;
@@ -29,21 +35,43 @@ const SearchUser = ({ value, onChange }: props) => {
           onChange={onChange}
           className="flex-1 bg-gray-800 border border-gray-700 text-white placeholder-gray-400"
         />
-        <div className="flex  space-x-1">
-          <Button
-            type="submit"
-            className="bg-gray-800 hover:bg-blue-600 text-white"
-          >
-            <span className="hidden md:inline">Search</span>
-            <Search size={18} />
-          </Button>
-          <Button
-            type="button"
-            className="bg-gray-800 hover:bg-blue-600 text-white"
-          >
-            <span className="hidden md:inline">Filter Members</span>
-            <Filter size={18} />
-          </Button>
+        <div className="flex  space-x-3">
+          <div className="">
+            <Button
+              type="submit"
+              className="bg-gray-800 hover:bg-blue-600 text-white"
+            >
+              <span className="hidden md:inline">Search</span>
+              <Search size={18} />
+            </Button>
+          </div>
+
+          <div className="">
+            {" "}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <span className="flex space-x-2 items-center">
+                    <Filter size={20} />
+                  </span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <FilterForm
+                  filters={{
+                    minAge: undefined,
+                    maxAge: undefined,
+                    gender: undefined,
+                    occupation: undefined,
+                    departments: [],
+                  }}
+                  onChange={function (filters: Filters): void {
+                    throw new Error("Function not implemented.");
+                  }}
+                />
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </div>
     </div>

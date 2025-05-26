@@ -12,6 +12,7 @@ export async function GET() {
         name: usersTable.name,
         surname: usersTable.surname,
         gender: personalDetailsTable.gender,
+        dob: personalDetailsTable.dob,
       })
       .from(usersTable)
       .innerJoin(
@@ -19,7 +20,7 @@ export async function GET() {
         eq(usersTable.id, personalDetailsTable.id)
       );
 
-    //console.log("Fetched members:", joinedData);
+    console.log("Fetched members:", joinedData);
     return NextResponse.json(joinedData);
   } catch (error) {
     console.error("Error fetching members:", error);
