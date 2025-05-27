@@ -31,9 +31,17 @@ import { useEffect, useRef, useState } from "react";
 
 type MemberTableProps = {
   searchQuery: string;
+  filterBy?: string;
+  minAge: number;
+  maxAge: number; // Optional filter by field
 };
 
-const MemberTable = ({ searchQuery }: MemberTableProps) => {
+const MemberTable = ({
+  searchQuery,
+  filterBy,
+  minAge,
+  maxAge,
+}: MemberTableProps) => {
   type MemberData = {
     name: string;
     surname: string;
@@ -68,18 +76,41 @@ const MemberTable = ({ searchQuery }: MemberTableProps) => {
         const [year, month, day] = dob.split("-").map(Number);
         if (!year || !month || !day) return "N/A";
 
-        const birthDate = new Date(year, month - 1, day); // months are 0-indexed
+        const birthDate = new Date(year, month - 1, day);
         const today = new Date();
 
         let age = today.getFullYear() - birthDate.getFullYear();
-        const hasHadBirthdayThisYear =
-          today.getMonth() > birthDate.getMonth() ||
+        if (
+          today.getMonth() < birthDate.getMonth() ||
           (today.getMonth() === birthDate.getMonth() &&
-            today.getDate() >= birthDate.getDate());
-
-        if (!hasHadBirthdayThisYear) age--;
+            today.getDate() < birthDate.getDate())
+        ) {
+          age--;
+        }
 
         return age.toString();
+      },
+      filterFn: (row, columnId, filterValue) => {
+        const dob = row.getValue(columnId);
+        if (!dob || typeof dob !== "string") return false;
+
+        const [year, month, day] = dob.split("-").map(Number);
+        const birthDate = new Date(year, month - 1, day);
+        const today = new Date();
+
+        let age = today.getFullYear() - birthDate.getFullYear();
+        if (
+          today.getMonth() < birthDate.getMonth() ||
+          (today.getMonth() === birthDate.getMonth() &&
+            today.getDate() < birthDate.getDate())
+        ) {
+          age--;
+        }
+
+        const min = filterValue?.min ?? -Infinity;
+        const max = filterValue?.max ?? Infinity;
+
+        return age >= min && age <= max;
       },
     },
 
@@ -119,6 +150,8 @@ const MemberTable = ({ searchQuery }: MemberTableProps) => {
   const [data, setData] = useState<MemberData[]>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
+  // Define minAge and maxAge if you want to support age filtering
+
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch("/api/members");
@@ -144,8 +177,15 @@ const MemberTable = ({ searchQuery }: MemberTableProps) => {
   });
 
   useEffect(() => {
-    table.getColumn("name")?.setFilterValue(searchQuery);
-  }, [searchQuery, table]);
+    if (filterBy === "age") {
+      table.getColumn("dob")?.setFilterValue({
+        min: minAge ? Number(minAge) : undefined,
+        max: maxAge ? Number(maxAge) : undefined,
+      });
+    } else if (typeof filterBy === "string") {
+      table.getColumn(filterBy)?.setFilterValue(searchQuery);
+    }
+  }, [searchQuery, filterBy, minAge, maxAge, table]);
 
   return (
     <>
