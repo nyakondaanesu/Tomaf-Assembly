@@ -37,6 +37,12 @@ CREATE TABLE "spouse_details" (
 	"spouse_contact" varchar(20)
 );
 --> statement-breakpoint
+CREATE TABLE "user_credentials" (
+	"username" varchar(50) NOT NULL,
+	"password" varchar(255) NOT NULL,
+	"role" varchar NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE "users" (
 	"member_id" serial PRIMARY KEY NOT NULL,
 	"name" varchar(255) NOT NULL,

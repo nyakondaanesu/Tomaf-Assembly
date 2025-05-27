@@ -1,5 +1,7 @@
 import MobileBottomNav from "../Home/components/bottomNav";
 import { GraphBar } from "./[components]/graphBar";
+import { GrowthChart } from "./[components]/lineGraph";
+
 import Navbar from "./[components]/navbar";
 import PieChartCard from "./[components]/pieChart";
 
@@ -12,6 +14,7 @@ const page = () => {
       <div className="flex justify-center items-center gap-6 flex-wrap mt-6">
         <PieChartCard />
         <GraphBar />
+        <GrowthChart />
         <MobileBottomNav />
       </div>
     </div>

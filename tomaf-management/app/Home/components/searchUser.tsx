@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Props = {
   value: string;
@@ -31,15 +31,35 @@ const SearchUser = ({
   setMaxAge,
   setMinAge,
 }: Props) => {
+  //fetch total amount of users  from api
+  const [totalUsers, setTotalUsers] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchTotalUsers = async () => {
+      try {
+        const response = await fetch("/api/totalUsers");
+        if (!response.ok) {
+          throw new Error("Failed to fetch total users");
+        }
+        const data = await response.json();
+        setTotalUsers(data.total);
+        console.log("Total users fetched:", data.total);
+      } catch (error) {
+        console.error("Error fetching total users:", error);
+      }
+    };
+    fetchTotalUsers();
+  }, []);
+
   return (
     <div className="md:flex w-full px-4 py-6 bg-slate-950 items-center justify-center space-x-4 space-y-4 md:space-y-0 md:space-x-6 md:justify-start">
       {/* Stats Card */}
       <div className="w-full max-w-md lg:max-w-xl bg-gray-900 text-white rounded-lg shadow p-5">
         <div className="flex items-center gap-3">
           <Users className="text-blue-500" size={24} />
-          <h1 className="text-lg font-semibold">Total Members</h1>
+          <h1 className="text-lg font-semibold">Registered Members</h1>
         </div>
-        <h4 className="text-2xl font-bold mt-2">2,543</h4>
+        <h4 className="text-2xl font-bold mt-2">{totalUsers}</h4>
       </div>
 
       {/* Search & Filter Section */}
