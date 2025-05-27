@@ -32,8 +32,8 @@ import { useEffect, useRef, useState } from "react";
 type MemberTableProps = {
   searchQuery: string;
   filterBy?: string;
-  minAge: number;
-  maxAge: number; // Optional filter by field
+  minAge: number | null; // Optional filter by field
+  maxAge: number | null; // Optional filter by field
 };
 
 const MemberTable = ({
@@ -194,7 +194,7 @@ const MemberTable = ({
           <h1 className="text-md font-bold">Member List</h1>
         </div>
 
-        <Table className="mb-5">
+        <Table className="">
           <TableHeader className="bg-[#1f2937] text-gray-400 uppercase text-xs">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow

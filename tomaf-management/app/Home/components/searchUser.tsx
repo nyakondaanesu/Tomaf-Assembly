@@ -15,8 +15,8 @@ type Props = {
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   filterBy: string; // Optional fi
   setFilterBy: (field: string) => void; // Optional setter for filterBy
-  minAge: number;
-  maxAge: number;
+  minAge: number | null;
+  maxAge: number | null; // Optional age filters\
   setMinAge: (value: number) => void;
   setMaxAge: (value: number) => void;
 };
@@ -71,14 +71,14 @@ const SearchUser = ({
             <Input
               type="number"
               placeholder="Min Age"
-              value={minAge}
+              value={minAge ?? ""}
               onChange={(e) => setMinAge(Number(e.target.value))}
               className="bg-gray-800 border border-gray-700 text-white placeholder-gray-400 w-24"
             />
             <Input
               type="number"
               placeholder="Max Age"
-              value={maxAge}
+              value={maxAge ?? ""}
               onChange={(e) => setMaxAge(Number(e.target.value))}
               className="bg-gray-800 border border-gray-700 text-white placeholder-gray-400 w-24"
             />

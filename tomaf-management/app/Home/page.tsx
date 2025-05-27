@@ -3,15 +3,16 @@ import Navbar from "./components/navbar";
 import SearchUser from "./components/searchUser";
 import MemberTable from "./components/memberTable";
 import { useState } from "react";
+import MobileBottomNav from "./components/bottomNav";
 
 const page = () => {
   const [search, setSearch] = useState("");
   const [filterBy, setFilterBy] = useState("name");
-  const [minAge, setMinAge] = useState(0);
-  const [maxAge, setMaxAge] = useState(120);
+  const [minAge, setMinAge] = useState<number | null>(null);
+  const [maxAge, setMaxAge] = useState<number | null>(null);
   return (
     <>
-      <div className="bg-gray-950 w-full text-white min-h-screen">
+      <div className="bg-gray-950 w-full text-white min-h-screen pb-16">
         <Navbar />
         <SearchUser
           value={search}
@@ -29,6 +30,8 @@ const page = () => {
           minAge={minAge}
           maxAge={maxAge}
         />
+
+        <MobileBottomNav />
       </div>
     </>
   );

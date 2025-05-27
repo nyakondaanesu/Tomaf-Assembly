@@ -2,7 +2,7 @@ import { db } from "@/app/db";
 import { NextResponse } from "next/server";
 import { usersTable } from "@/app/db/schema";
 import { personalDetailsTable } from "@/app/db/schema";
-import { join } from "path";
+
 import { eq } from "drizzle-orm";
 
 export async function GET() {
