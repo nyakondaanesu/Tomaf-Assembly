@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { Home, BarChart2, Users } from "lucide-react";
+import { Home, BarChart2, Users, Settings } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 const MobileBottomNav = () => {
@@ -37,6 +37,15 @@ const MobileBottomNav = () => {
         >
           <Users size={22} />
           <span className="text-xs">Departments</span>
+        </Link>
+        <Link
+          href="/settings"
+          className={`flex flex-col items-center gap-1 ${
+            pathname === "/settings" ? "text-blue-500" : "text-gray-400"
+          }`}
+        >
+          <Settings size={22} />
+          <span className="text-xs">Settings</span>
         </Link>
       </div>
     </nav>

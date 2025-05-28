@@ -1,23 +1,34 @@
-import NextAuth, { NextAuthOptions } from "next-auth";
+import NextAuth, {
+  DefaultSession,
+  DefaultUser,
+  NextAuthOptions,
+} from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { db } from "@/app/db";
 import { userCredentials } from "@/app/db/schema";
 import { eq } from "drizzle-orm";
 import { compare } from "bcryptjs";
-import type { DefaultSession } from "next-auth";
 
 declare module "next-auth" {
   interface Session {
     user: {
+      id: string;
       role?: string;
     } & DefaultSession["user"];
   }
-  interface User {
+
+  interface User extends DefaultUser {
+    id: string;
+    role?: string;
+  }
+
+  interface JWT {
+    id: string;
     role?: string;
   }
 }
 
-const authOptions: NextAuthOptions = {
+export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "credentials",
@@ -74,13 +85,17 @@ const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
+        token.id = user.id; // ✅ Add user ID to the token
         token.role = user.role;
+        token.name = user.name; // ✅ Already present
       }
+      console.log(token);
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
-        session.user.role = token.role as string;
+        session.user.id = (token.id ?? token.sub) as string; // fallback to sub
+        session.user.role = token.role as string; // ✅ Already present
       }
       return session;
     },
