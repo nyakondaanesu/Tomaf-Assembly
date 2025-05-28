@@ -24,6 +24,14 @@ export default withAuth(
           return token?.role === "user";
         }
 
+        if (pathname.startsWith("/departments")) {
+          return token?.role === "user";
+        }
+
+        if (pathname.startsWith("/user-settings")) {
+          return token?.role === "user";
+        }
+
         // For other protected routes, just check if user is authenticated
         return !!token;
       },

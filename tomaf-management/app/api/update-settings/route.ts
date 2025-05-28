@@ -3,14 +3,11 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { db } from "@/app/db";
 import { userCredentials } from "@/app/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, and, ne } from "drizzle-orm";
 import { hash } from "bcryptjs";
 
 export async function POST(request: Request) {
-  // Now getServerSession accepts the request object directly
   const session = await getServerSession(authOptions);
-
-  console.log(`your session ${session?.user.id}`);
 
   if (!session?.user?.id) {
     return NextResponse.json(
@@ -32,19 +29,46 @@ export async function POST(request: Request) {
       );
     }
 
-    const updateData: Partial<{ username: string; password: string }> = {};
+    const updates: Partial<{ username: string; password: string }> = {};
+    const trimmedUsername = username?.trim();
 
-    if (username) {
-      updateData.username = username;
+    if (trimmedUsername) {
+      // Check if username already exists (and not same as current user)
+      const existing = await db
+        .select()
+        .from(userCredentials)
+        .where(
+          and(
+            eq(userCredentials.username, trimmedUsername),
+            ne(userCredentials.id, userId)
+          )
+        );
+
+      if (existing.length > 0) {
+        return NextResponse.json(
+          { message: "Username is already taken" },
+          { status: 409 }
+        );
+      }
+
+      updates.username = trimmedUsername;
     }
+
     if (password) {
       const hashedPassword = await hash(password, 12);
-      updateData.password = hashedPassword;
+      updates.password = hashedPassword;
+    }
+
+    if (Object.keys(updates).length === 0) {
+      return NextResponse.json(
+        { message: "No valid updates provided" },
+        { status: 400 }
+      );
     }
 
     await db
       .update(userCredentials)
-      .set(updateData)
+      .set(updates)
       .where(eq(userCredentials.id, userId))
       .execute();
 

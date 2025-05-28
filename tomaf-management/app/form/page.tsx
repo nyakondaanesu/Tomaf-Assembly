@@ -286,7 +286,7 @@ const Page = () => {
           </>
         )}
       </div>
-      <footer className="w-full text-center py-4 text-xs text-gray-500">
+      <footer className="w-full text-center py-4 text-xs text-gray-500 mt-auto">
         Developed by Anesu Nyakonda
       </footer>
     </div>

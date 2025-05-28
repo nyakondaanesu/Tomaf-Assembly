@@ -10,7 +10,6 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 
 export default function UserSettingsPage() {
-  const router = useRouter();
   const { data: session, status } = useSession();
 
   const [username, setUsername] = useState("");
@@ -48,7 +47,7 @@ export default function UserSettingsPage() {
         throw new Error(data.message || "Failed to update settings");
       }
 
-      toast.success("Settings updated successfully!");
+      toast.success("account updated successfully!");
       setNewPassword(""); // Clear password field on success
     } catch (error: any) {
       toast.error(error.message || "Something went wrong.");
@@ -98,7 +97,7 @@ export default function UserSettingsPage() {
       >
         <div>
           <label className="block mb-2 text-sm font-semibold text-gray-300">
-            Username
+            New Username
           </label>
           <Input
             placeholder="Enter new username"

@@ -39,9 +39,9 @@ const MobileBottomNav = () => {
           <span className="text-xs">Departments</span>
         </Link>
         <Link
-          href="/settings"
+          href="/user-settings"
           className={`flex flex-col items-center gap-1 ${
-            pathname === "/settings" ? "text-blue-500" : "text-gray-400"
+            pathname === "/user-settings" ? "text-blue-500" : "text-gray-400"
           }`}
         >
           <Settings size={22} />
