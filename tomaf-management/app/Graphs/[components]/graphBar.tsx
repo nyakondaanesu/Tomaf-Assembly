@@ -7,7 +7,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -25,6 +24,10 @@ const COLORS = {
   "40+": "#ef4444", // Red
 };
 
+type AgeApiResponseItem = {
+  ageRange: string;
+  count: number | string;
+};
 export function GraphBar() {
   const [chartData, setChartData] = useState<
     { ageGroup: string; rawAgeGroup: string; count: number }[]
@@ -38,7 +41,7 @@ export function GraphBar() {
         console.log("age data response:", json);
 
         // Transform age group into multiline labels
-        const formatted = json.map((item: any) => ({
+        const formatted = json.map((item: AgeApiResponseItem) => ({
           ageGroup: formatLabel(item.ageRange), // e.g. "0-12" => "Infants\n(0-12)"
           rawAgeGroup: item.ageRange,
           count: Number(item.count),

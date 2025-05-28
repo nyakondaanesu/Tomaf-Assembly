@@ -119,7 +119,7 @@ const MemberTable = ({
       header: () => {
         <div className="hidden lg:block">Actions</div>;
       },
-      cell: ({ row }) => (
+      cell: () => (
         <>
           {/* Visible on large screens only */}
           <div className="hidden lg:flex space-x-2">
@@ -146,7 +146,8 @@ const MemberTable = ({
 
   const [selectedRow, setSelectedRow] = useState<MemberData | null>(null);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const timeoutRef = useRef<any>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const [data, setData] = useState<MemberData[]>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
@@ -235,8 +236,12 @@ const MemberTable = ({
                       setShowMobileMenu(true);
                     }, 500);
                   }}
-                  onTouchEnd={() => clearTimeout(timeoutRef.current)}
-                  onTouchMove={() => clearTimeout(timeoutRef.current)}
+                  onTouchEnd={() => {
+                    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+                  }}
+                  onTouchMove={() => {
+                    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+                  }}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="px-4 py-3">

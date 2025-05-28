@@ -5,7 +5,7 @@ import MemberTable from "./components/memberTable";
 import { useState } from "react";
 import MobileBottomNav from "./components/bottomNav";
 
-const page = () => {
+const HomePage = () => {
   const [search, setSearch] = useState("");
   const [filterBy, setFilterBy] = useState("name");
   const [minAge, setMinAge] = useState<number | null>(null);
@@ -37,4 +37,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default HomePage;

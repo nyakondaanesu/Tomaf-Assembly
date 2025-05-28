@@ -34,7 +34,7 @@ export default function LoginPage() {
         }
       }
     } catch (error) {
-      setError("An error occurred during login");
+      setError(`eror: "${error}`);
     } finally {
       setLoading(false);
     }

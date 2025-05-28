@@ -52,8 +52,6 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleDeleteUser = (name: string) => {};
-
   return (
     <div className="p-8">
       <h1 className="text-3xl font-bold mb-8">
@@ -111,10 +109,7 @@ export default function AdminDashboard() {
                   <TableCell>{user.password}</TableCell>
                   <TableCell>{user.role}</TableCell>
                   <TableCell>
-                    <Button
-                      variant="destructive"
-                      onClick={() => handleDeleteUser(user.username)}
-                    >
+                    <Button variant="destructive">
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </TableCell>
