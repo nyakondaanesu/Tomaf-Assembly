@@ -113,9 +113,7 @@ export default function DepartmentsPage() {
                 height={40}
                 className="mr-3"
               />
-              <h1 className="text-2xl font-bold text-gray-900">
-                Church Departments
-              </h1>
+              <h1 className="text-lg font-bold text-gray-900">Departments</h1>
             </div>
             <div className="text-sm text-gray-600">
               Welcome, {session?.user?.name || "User"}

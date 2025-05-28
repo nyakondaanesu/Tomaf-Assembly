@@ -17,7 +17,13 @@ export async function GET() {
       `
     );
 
-    return NextResponse.json(result.rows);
+    // Debug the full result to see what db.execute returns
+    console.log("DB execute result:", result);
+
+    // The result is already the array of rows
+    const data = result;
+
+    return NextResponse.json(data);
   } catch (error) {
     console.error("Error fetching membership growth:", error);
     return NextResponse.json(
