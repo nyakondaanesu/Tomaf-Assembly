@@ -22,7 +22,9 @@ export async function POST(req: NextRequest) {
 
     const safeMembership: MembershipData = {
       ...membership,
-      dateJoined: new Date(membership.dateJoined),
+      dateJoined: membership.dateJoined
+        ? new Date(membership.dateJoined)
+        : null,
       baptismDate: membership.baptismDate
         ? new Date(membership.baptismDate)
         : null,

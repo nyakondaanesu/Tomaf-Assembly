@@ -286,6 +286,9 @@ const Page = () => {
           </>
         )}
       </div>
+      <footer className="w-full text-center py-4 text-xs text-gray-500">
+        Developed by Anesu Nyakonda
+      </footer>
     </div>
   );
 };

@@ -62,9 +62,13 @@ export const SubmitData = async (
   // Insert membership data
   await db.insert(membershipTable).values({
     id: userId,
-    dateJoined: memberData.dateJoined?.toISOString().split("T")[0],
+    dateJoined: memberData.dateJoined
+      ? memberData.dateJoined.toISOString().split("T")[0]
+      : "",
     isBaptized: memberData.isBaptized,
-    baptismDate: memberData.baptismDate?.toISOString().split("T")[0] || null,
+    ...(memberData.baptismDate && {
+      baptismDate: memberData.baptismDate.toISOString().split("T")[0],
+    }),
   });
 
   // Insert all selected departments

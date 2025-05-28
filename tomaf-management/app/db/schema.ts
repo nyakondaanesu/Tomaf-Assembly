@@ -101,6 +101,7 @@ export const personalDetailsRelations = relations(
 );
 
 export const userCredentials = pgTable("user_credentials", {
+  id: serial("id").primaryKey(), // <-- add this
   username: varchar("username", { length: 50 }).notNull(),
   password: varchar("password", { length: 255 }).notNull(),
   role: varchar("role").notNull(),

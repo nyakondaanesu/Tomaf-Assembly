@@ -110,7 +110,7 @@ const PersonalDetails = ({ data, setData }: Props) => {
               render={({ field }) => (
                 <DatePicker
                   {...field}
-                  format="dd/MM/yyyy"
+                  format="yyyy/MM/DD"
                   slotProps={{
                     textField: {
                       fullWidth: true,

@@ -122,7 +122,7 @@ const MemberShip = ({ data, setData }: MemberShipProps) => {
                 render={({ field }) => (
                   <DatePicker
                     {...field}
-                    format="dd/MM/yyyy"
+                    format="yyyy/MM/DD"
                     slotProps={{
                       textField: {
                         fullWidth: true,
