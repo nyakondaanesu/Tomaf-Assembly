@@ -1,5 +1,4 @@
 // db/schema.ts
-
 import {
   integer,
   pgTable,
@@ -9,6 +8,7 @@ import {
   boolean,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
+
 // Users table
 export const usersTable = pgTable("users", {
   id: serial("member_id").primaryKey(),
@@ -35,8 +35,7 @@ export const spouseDetailsTable = pgTable("spouse_details", {
   id: integer("member_id")
     .primaryKey()
     .references(() => usersTable.id, { onDelete: "cascade" }),
-
-  nofamily: boolean("no_family").notNull(),
+  nofamily: boolean("no_Of_family").notNull(),
   spouseName: varchar("spouse_name", { length: 255 }),
   spouseId: varchar("spouse_id", { length: 20 }),
   familsize: integer("family_size"),
@@ -50,7 +49,6 @@ export const membershipTable = pgTable("membership", {
   id: integer("member_id")
     .primaryKey()
     .references(() => usersTable.id, { onDelete: "cascade" }),
-
   dateJoined: date("date_joined").notNull(),
   isBaptized: boolean("is_baptized").notNull(),
   baptismDate: date("baptism_date"),
@@ -67,15 +65,21 @@ export const memberDepartmentsTable = pgTable("member_departments", {
   memberId: integer("member_id")
     .references(() => usersTable.id, { onDelete: "cascade" })
     .notNull(),
-
   departmentId: integer("department_id")
     .references(() => departmentsTable.id, { onDelete: "cascade" })
     .notNull(),
 });
 
-// a user has one personal detail
+// User credentials table
+export const userCredentials = pgTable("user_credentials", {
+  id: serial("id").primaryKey(),
+  username: varchar("username", { length: 50 }).notNull(),
+  password: varchar("password", { length: 255 }).notNull(),
+  role: varchar("role").notNull(),
+});
 
-export const userRelations = relations(usersTable, ({ one }) => ({
+// Relations
+export const userRelations = relations(usersTable, ({ one, many }) => ({
   personalDetails: one(personalDetailsTable, {
     fields: [usersTable.id],
     references: [personalDetailsTable.id],
@@ -88,6 +92,7 @@ export const userRelations = relations(usersTable, ({ one }) => ({
     fields: [usersTable.id],
     references: [membershipTable.id],
   }),
+  memberDepartments: many(memberDepartmentsTable),
 }));
 
 export const personalDetailsRelations = relations(
@@ -100,9 +105,37 @@ export const personalDetailsRelations = relations(
   })
 );
 
-export const userCredentials = pgTable("user_credentials", {
-  id: serial("id").primaryKey(), // <-- add this
-  username: varchar("username", { length: 50 }).notNull(),
-  password: varchar("password", { length: 255 }).notNull(),
-  role: varchar("role").notNull(),
-});
+export const spouseDetailsRelations = relations(
+  spouseDetailsTable,
+  ({ one }) => ({
+    user: one(usersTable, {
+      fields: [spouseDetailsTable.id],
+      references: [usersTable.id],
+    }),
+  })
+);
+
+export const membershipRelations = relations(membershipTable, ({ one }) => ({
+  user: one(usersTable, {
+    fields: [membershipTable.id],
+    references: [usersTable.id],
+  }),
+}));
+
+export const departmentRelations = relations(departmentsTable, ({ many }) => ({
+  memberDepartments: many(memberDepartmentsTable),
+}));
+
+export const memberDepartmentsRelations = relations(
+  memberDepartmentsTable,
+  ({ one }) => ({
+    member: one(usersTable, {
+      fields: [memberDepartmentsTable.memberId],
+      references: [usersTable.id],
+    }),
+    department: one(departmentsTable, {
+      fields: [memberDepartmentsTable.departmentId],
+      references: [departmentsTable.id],
+    }),
+  })
+);
