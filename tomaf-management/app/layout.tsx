@@ -3,7 +3,8 @@ import { Providers } from "./providers";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "./api/auth/[...nextauth]/authoptions";
+
 import SideNav from "./sideNav";
 import MobileBottomNav from "./Home/components/bottomNav";
 const geistSans = Geist({
