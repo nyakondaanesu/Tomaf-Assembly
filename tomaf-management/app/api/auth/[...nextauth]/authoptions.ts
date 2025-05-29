@@ -1,8 +1,4 @@
-import NextAuth, {
-  DefaultSession,
-  DefaultUser,
-  NextAuthOptions,
-} from "next-auth";
+import { DefaultSession, DefaultUser, NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { db } from "@/app/db";
 import { userCredentials } from "@/app/db/schema";
