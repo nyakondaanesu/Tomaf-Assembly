@@ -1,7 +1,7 @@
 "use client";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -64,7 +64,7 @@ const MemberTable = ({
 
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const touchStartPos = useRef<{ x: number; y: number } | null>(null);
-  const pathname = usePathname()?.toLowerCase() || "";
+  const router = useRouter();
   const handleTouchStart = (e: React.TouchEvent, memberId: number) => {
     // Debug: Log the member ID
     console.log("Touch start for member ID:", memberId);
@@ -288,14 +288,11 @@ const MemberTable = ({
         <div className="flex justify-between items-center p-4">
           <h1 className="text-md font-bold">Member List</h1>
 
-          <button className="bg-blue-500 px-2 py-1 rounded-md">
+          <button
+            onClick={() => router.push("/form")}
+            className="bg-blue-500 px-3 py-2 rounded-md text-white hover:bg-blue-600 transition"
+          >
             Add Member
-            <Link
-              href="/form"
-              className={`flex flex-col items-center gap-1 ${
-                pathname === "/form" ? "text-blue-500" : "text-gray-400"
-              }`}
-            ></Link>
           </button>
 
           {loadingDetails && (
