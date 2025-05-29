@@ -75,7 +75,7 @@ const SearchUser = ({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="bg-gray-800 text-white border border-gray-700">
-            {["name", "surname", "occupation", "age"].map((field) => (
+            {["name", "surname", "age"].map((field) => (
               <DropdownMenuItem
                 key={field}
                 onSelect={() => setFilterBy(field)}

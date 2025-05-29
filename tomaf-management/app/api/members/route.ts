@@ -1,32 +1,26 @@
 import { db } from "@/app/db";
-import { NextResponse } from "next/server";
-import { usersTable } from "@/app/db/schema";
-import { personalDetailsTable } from "@/app/db/schema";
-
+import { usersTable, personalDetailsTable } from "@/app/db/schema";
 import { eq } from "drizzle-orm";
 
 export async function GET() {
   try {
-    const joinedData = await db
+    const result = await db
       .select({
+        id: usersTable.id,
         name: usersTable.name,
         surname: usersTable.surname,
         gender: personalDetailsTable.gender,
         dob: personalDetailsTable.dob,
       })
       .from(usersTable)
-      .innerJoin(
+      .leftJoin(
         personalDetailsTable,
         eq(usersTable.id, personalDetailsTable.id)
       );
 
-    // console.log("Fetched members:", joinedData);
-    return NextResponse.json(joinedData);
+    return Response.json(result);
   } catch (error) {
     console.error("Error fetching members:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch members" },
-      { status: 500 }
-    );
+    return new Response("Internal Server Error", { status: 500 });
   }
 }

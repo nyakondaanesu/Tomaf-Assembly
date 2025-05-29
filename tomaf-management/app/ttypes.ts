@@ -50,6 +50,33 @@ export type Filters = {
   minAge?: number;
   maxAge?: number;
   gender?: string;
-  occupation?: string;
-  departments: string[];
+};
+
+export type FullMemberDetails = {
+  id: number;
+  name: string;
+  surname: string;
+  personalDetails: {
+    gender: string;
+    dob: string;
+    phone: string;
+    address: string;
+    nationalId?: string | null;
+    maritalStatus: string;
+    occupation: string;
+  } | null;
+  spouseDetails: {
+    nofamily: boolean;
+    spouseName?: string;
+    spouseId?: string;
+    familsize?: number;
+    childrenCount?: number;
+    nextOfKin?: string;
+    spouseContact?: string;
+  } | null;
+  membership: {
+    dateJoined: string;
+    isBaptized: boolean;
+    baptismDate: string | null;
+  } | null;
 };
