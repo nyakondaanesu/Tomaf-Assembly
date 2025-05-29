@@ -45,7 +45,7 @@ export default function DepartmentsPage() {
       const data = await res.json();
       setDepartments(data);
     } catch (err) {
-      setError("Failed to load departments");
+      setError(`got error ${err}`);
     } finally {
       setLoading(false);
     }

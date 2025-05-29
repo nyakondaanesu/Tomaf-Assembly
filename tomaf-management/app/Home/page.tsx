@@ -3,7 +3,6 @@ import Navbar from "./components/navbar";
 import SearchUser from "./components/searchUser";
 import MemberTable from "./components/memberTable";
 import { useState } from "react";
-import MobileBottomNav from "./components/bottomNav";
 
 const HomePage = () => {
   const [search, setSearch] = useState("");

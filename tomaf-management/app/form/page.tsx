@@ -6,7 +6,6 @@ import PersonalDetails from "./personalDetails";
 import MemberFamily from "./memberFamily";
 import MemberShip from "./membership";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 
 import type {
   PersonalDetailsData,
@@ -24,7 +23,6 @@ const Page = () => {
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [isloading, setIsLoading] = useState<boolean>(false);
-  const pathname = usePathname()?.toLowerCase() || "";
 
   const [formData, setFormData] = useState<FormData>({
     personalDetails: {

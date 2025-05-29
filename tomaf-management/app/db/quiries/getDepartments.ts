@@ -32,29 +32,45 @@ export async function getDepartmentsWithMembers() {
       .orderBy(departmentsTable.name, usersTable.name);
 
     // Group the results by department
-    const groupedDepartments = departments.reduce((acc, row) => {
-      const deptId = row.departmentId;
+    const groupedDepartments = departments.reduce(
+      (acc, row) => {
+        const deptId = row.departmentId;
 
-      if (!acc[deptId]) {
-        acc[deptId] = {
-          id: row.departmentId,
-          name: row.departmentName,
-          members: [],
-        };
-      }
+        if (!acc[deptId]) {
+          acc[deptId] = {
+            id: row.departmentId,
+            name: row.departmentName,
+            members: [],
+          };
+        }
 
-      if (row.memberId) {
-        acc[deptId].members.push({
-          id: row.memberId,
-          name: row.memberName,
-          surname: row.memberSurname,
-          phone: row.memberPhone,
-          gender: row.memberGender,
-        });
-      }
+        if (row.memberId) {
+          acc[deptId].members.push({
+            id: row.memberId,
+            name: row.memberName ?? "",
+            surname: row.memberSurname ?? "",
+            phone: row.memberPhone ?? "",
+            gender: row.memberGender ?? "",
+          });
+        }
 
-      return acc;
-    }, {} as Record<number, any>);
+        return acc;
+      },
+      {} as Record<
+        number,
+        {
+          id: number;
+          name: string;
+          members: {
+            id: number;
+            name: string;
+            surname: string;
+            phone: string;
+            gender: string;
+          }[];
+        }
+      >
+    );
 
     return Object.values(groupedDepartments);
   } catch (error) {

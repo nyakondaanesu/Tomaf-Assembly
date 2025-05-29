@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -49,8 +49,8 @@ export default function UserSettingsPage() {
 
       toast.success("account updated successfully!");
       setNewPassword(""); // Clear password field on success
-    } catch (error: any) {
-      toast.error(error.message || "Something went wrong.");
+    } catch (error) {
+      toast.error("Something went wrong.");
     } finally {
       setLoading(false);
     }
