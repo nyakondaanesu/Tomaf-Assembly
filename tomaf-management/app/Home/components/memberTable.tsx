@@ -1,4 +1,6 @@
 "use client";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -62,7 +64,7 @@ const MemberTable = ({
 
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const touchStartPos = useRef<{ x: number; y: number } | null>(null);
-
+  const pathname = usePathname()?.toLowerCase() || "";
   const handleTouchStart = (e: React.TouchEvent, memberId: number) => {
     // Debug: Log the member ID
     console.log("Touch start for member ID:", memberId);
@@ -78,7 +80,7 @@ const MemberTable = ({
     timeoutRef.current = setTimeout(async () => {
       try {
         setLoadingDetails(true);
-        console.log("Fetching details for member ID:", memberId);
+        // console.log("Fetching details for member ID:", memberId);
 
         const res = await fetch(`/api/members/full?id=${memberId}`);
         if (!res.ok) {
@@ -88,7 +90,7 @@ const MemberTable = ({
         }
 
         const result: FullMemberDetails = await res.json();
-        console.log("Fetched member details:", result);
+        //console.log("Fetched member details:", result);
 
         setSelectedRow(result);
         setShowMobileMenu(true);
@@ -285,6 +287,17 @@ const MemberTable = ({
       <div className="mx-3 md:mx-5 rounded-lg border border-gray-700 bg-[#111827] shadow-md">
         <div className="flex justify-between items-center p-4">
           <h1 className="text-md font-bold">Member List</h1>
+
+          <button className="bg-blue-500 px-2 py-1 rounded-md">
+            Add Member
+            <Link
+              href="/form"
+              className={`flex flex-col items-center gap-1 ${
+                pathname === "/form" ? "text-blue-500" : "text-gray-400"
+              }`}
+            ></Link>
+          </button>
+
           {loadingDetails && (
             <div className="text-sm text-gray-400">Loading details...</div>
           )}

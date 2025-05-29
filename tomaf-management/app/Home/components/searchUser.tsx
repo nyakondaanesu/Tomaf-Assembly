@@ -43,7 +43,7 @@ const SearchUser = ({
         }
         const data = await response.json();
         setTotalUsers(data.total);
-        console.log("Total users fetched:", data.total);
+        // console.log("Total users fetched:", data.total);
       } catch (error) {
         console.error("Error fetching total users:", error);
       }

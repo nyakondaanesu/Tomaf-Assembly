@@ -5,6 +5,8 @@ import React, { useState } from "react";
 import PersonalDetails from "./personalDetails";
 import MemberFamily from "./memberFamily";
 import MemberShip from "./membership";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import type {
   PersonalDetailsData,
@@ -22,6 +24,7 @@ const Page = () => {
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [isloading, setIsLoading] = useState<boolean>(false);
+  const pathname = usePathname()?.toLowerCase() || "";
 
   const [formData, setFormData] = useState<FormData>({
     personalDetails: {
@@ -232,9 +235,17 @@ const Page = () => {
         )}
 
         {!isloading && submitted && (
-          <div className="flex items-center gap-2 mt-4 bg-green-100 text-green-800 p-4 rounded-md shadow-sm">
-            <Image src="/check.png" alt="Success" width={50} height={50} />
-            <span>Details submitted successfully!</span>
+          <div className="flex items-center gap-4 mt-6 bg-green-50 text-green-900 p-5 rounded-lg shadow-md border border-green-200">
+            <Image src="/check.png" alt="Success" width={40} height={40} />
+            <span className="flex-1 font-semibold text-lg">
+              Details submitted successfully!
+            </span>
+            <Link
+              href="/Home"
+              className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors duration-200"
+            >
+              Done
+            </Link>
           </div>
         )}
 

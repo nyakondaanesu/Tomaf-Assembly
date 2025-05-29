@@ -30,8 +30,6 @@ const HomePage = () => {
           minAge={minAge}
           maxAge={maxAge}
         />
-
-        <MobileBottomNav />
       </div>
     </>
   );

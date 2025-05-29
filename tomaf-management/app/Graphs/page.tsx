@@ -1,4 +1,3 @@
-import MobileBottomNav from "../Home/components/bottomNav";
 import { GraphBar } from "./[components]/graphBar";
 import { GrowthChart } from "./[components]/lineGraph";
 
@@ -15,7 +14,6 @@ const page = () => {
         <PieChartCard />
         <GraphBar />
         <GrowthChart />
-        <MobileBottomNav />
       </div>
     </div>
   );
