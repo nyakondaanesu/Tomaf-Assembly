@@ -49,7 +49,8 @@ export default function UserSettingsPage() {
 
       toast.success("account updated successfully!");
       setNewPassword(""); // Clear password field on success
-    } catch (error) {
+    } catch (err) {
+      console.log(err);
       toast.error("Something went wrong.");
     } finally {
       setLoading(false);
