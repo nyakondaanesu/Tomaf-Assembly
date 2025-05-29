@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AFM Member System",
+  title: "TOMAF Assembly Portal",
   description: "Church member and department management app",
 };
 
