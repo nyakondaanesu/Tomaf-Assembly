@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react"; // optional icon
+import Image from "next/image";
 
 const Navbar = () => {
   const router = useRouter();
@@ -10,7 +11,7 @@ const Navbar = () => {
     <div className="flex justify-between items-center border-b border-gray-700 bg-[#111827] px-6 py-3 shadow-md">
       {/* Logo & Brand */}
       <div className="flex items-center space-x-3">
-        <img
+        <Image
           src="/afmlogo.png"
           alt="AFM Logo"
           className="h-8 w-8 object-contain"

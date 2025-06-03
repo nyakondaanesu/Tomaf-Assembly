@@ -90,7 +90,7 @@ const Page = () => {
   ];
 
   const validateCurrentStep = async () => {
-    let errors: { [key: string]: string } = {};
+    const errors: { [key: string]: string } = {};
     const currentStepData = steps[currentStep].props.data;
     const fieldsToCheck = requiredFields[currentStep];
 

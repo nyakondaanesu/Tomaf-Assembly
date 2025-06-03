@@ -1,8 +1,10 @@
+import Image from "next/image";
+
 const Navbar = () => {
   return (
     <>
       <div className="flex  border-b border-gray-700 items-center ">
-        <img
+        <Image
           src="afmlogo.png"
           alt="afm logo"
           height={30}
