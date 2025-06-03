@@ -1,8 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import PersonalDetails from "./personalDetails";
+import { PersonalDetailsRef } from "./personalDetails";
 import MemberFamily from "./memberFamily";
 import MemberShip from "./membership";
 import Link from "next/link";
@@ -58,14 +59,19 @@ const Page = () => {
     ["noFamily"],
     ["dateJoined", "isBaptized"],
   ];
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+
+  const PersonalDetailsRef = useRef<PersonalDetailsRef>(null);
 
   const steps = [
     <PersonalDetails
       key="personal"
+      ref={PersonalDetailsRef}
       data={formData.personalDetails}
       setData={(data: PersonalDetailsData) =>
         setFormData((prev) => ({ ...prev, personalDetails: data }))
       }
+      errors={formErrors}
     />,
     <MemberFamily
       key="family"
@@ -83,57 +89,45 @@ const Page = () => {
     />,
   ];
 
-  const validateCurrentStep = () => {
-    if (currentStep === 1 && formData.familyDetails.noFamily) {
-      return true;
-    }
-
-    //if date joined is not selected, return false
-    if (currentStep === 2 && formData.membership.dateJoined === null) {
-      alert("Please Enter the date you joined Tomaf.");
-      return false;
-    }
-
-    if (currentStep === 2 && formData.membership.isBaptized) {
-      if (formData.membership.baptismDate === null) {
-        alert("if you were baptised select the baptism date.");
-        return false;
-      }
-    }
-
+  const validateCurrentStep = async () => {
+    let errors: { [key: string]: string } = {};
     const currentStepData = steps[currentStep].props.data;
     const fieldsToCheck = requiredFields[currentStep];
+
+    if (currentStep === 0) {
+      const isValid =
+        (await PersonalDetailsRef.current?.validateForm()) || false;
+      if (!isValid) return false;
+    }
 
     for (const field of fieldsToCheck) {
       const value = currentStepData[field as keyof typeof currentStepData];
 
-      if (field === "dob" && value === null) {
-        alert("Please fill in all required fields.");
-        return false;
-      }
-
-      if (typeof value === "string" && value.trim() === "") {
-        alert("Please fill in all required fields.");
-        return false;
-      }
-
-      if (Array.isArray(value) && value.length === 0) {
-        alert("Please fill in all required fields.");
-        return false;
+      if (
+        (typeof value === "string" && value.trim() === "") ||
+        value === null
+      ) {
+        errors[field] = "This field is required.";
       }
 
       if (currentStep === 1 && field === "noFamily" && !value) {
-        if (currentStepData.spouseName.trim() === "") {
-          alert("Please fill in spouse's name.");
-          return false;
-        }
-        if (currentStepData.spouseID.trim() === "") {
-          alert("Please fill in spouse's ID.");
-          return false;
-        }
+        if (!currentStepData.spouseName.trim())
+          errors["spouseName"] = "Required.";
+        if (!currentStepData.spouseID.trim()) errors["spouseID"] = "Required.";
+      }
+
+      if (
+        currentStep === 2 &&
+        field === "isBaptized" &&
+        currentStepData.isBaptized
+      ) {
+        if (!currentStepData.baptismDate)
+          errors["baptismDate"] = "Select baptism date.";
       }
     }
-    return true;
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = async () => {
@@ -265,13 +259,13 @@ const Page = () => {
               )}
               <button
                 type="button"
-                onClick={() => {
+                onClick={async () => {
                   if (currentStep === steps.length - 1) {
-                    if (validateCurrentStep()) {
+                    if (await validateCurrentStep()) {
                       handleSubmit();
                     }
                   } else {
-                    if (validateCurrentStep()) {
+                    if (await validateCurrentStep()) {
                       setCurrentStep((prev) =>
                         Math.min(prev + 1, steps.length - 1)
                       );

@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect } from "react";
 
 import Image from "next/image";
@@ -7,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Toaster, toast } from "sonner";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 
 export default function UserSettingsPage() {
   const { data: session, status } = useSession();
@@ -134,10 +133,16 @@ export default function UserSettingsPage() {
         </Button>
       </form>
 
-      <div className="mt-8 text-center">
+      <div className="mt-8 space-x-10 text-center">
         <Link href="/Home" className="text-blue-400 hover:underline">
           ← Back to Home
         </Link>
+        <Button
+          onClick={() => signOut({ callbackUrl: "/login" })}
+          className="bg-blue-600 hover:bg-red-700"
+        >
+          Sign Out
+        </Button>
       </div>
     </main>
   );

@@ -48,7 +48,7 @@ const MemberFamily = ({ data, setData }: MemberFamilyProps) => {
             id: "spouseID",
             label: "Spouse's ID No",
             type: "text",
-            placeholder: "xx-1234-X-12",
+            placeholder: "e.g 6312345678M19",
           },
           {
             id: "spouseContact",
@@ -66,13 +66,13 @@ const MemberFamily = ({ data, setData }: MemberFamilyProps) => {
             id: "familySize",
             label: "Family Size",
             type: "number",
-            placeholder: "5",
+            placeholder: "e.g 5",
           },
           {
             id: "childrenCount",
             label: "Number of Children",
             type: "number",
-            placeholder: "3",
+            placeholder: "e.g 3",
           },
         ].map(({ id, label, type, placeholder }) => (
           <div key={id} className="flex flex-col">

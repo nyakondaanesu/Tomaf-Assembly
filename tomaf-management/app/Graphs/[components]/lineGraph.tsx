@@ -44,7 +44,7 @@ export function GrowthChart() {
   return (
     <Card className="w-full max-w-sm bg-[#111827] border-none h-fit mt-5 text-white">
       <CardHeader>
-        <CardTitle>Church Growth Over Time</CardTitle>
+        <CardTitle>Church Growth</CardTitle>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>

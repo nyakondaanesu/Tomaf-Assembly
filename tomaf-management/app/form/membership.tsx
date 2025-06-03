@@ -28,6 +28,7 @@ const departmentGroups: Record<string, Department[]> = {
     { id: 7, name: "Sunday School and Young Generation" },
     { id: 13, name: "Boys" },
     { id: 14, name: "Girls" },
+    { id: 15, name: "Youth" },
   ],
   Unions: [
     { id: 10, name: "ladies union" },
